@@ -42,12 +42,13 @@ class InstagramBase(accessToken: String) extends InstagramClient {
 		case _ => params
 	}
 
-	def request[T](verbs: Verbs, apiPath: String, params: Option[Map[String, Seq[String]]] = None)(implicit r: Reads[T]): Future[Response[T]] = {
+	def request[T](verbs: Verbs, apiPath: String, params: Option[Map[String, String]] = None)(implicit r: Reads[T]): Future[Response[T]] = {
 		val effectiveUrl = s"${Constants.API_URL}$apiPath?access_token=$accessToken"
-		print(effectiveUrl)
-		val parameters: Map[String, Seq[String]] = if (params.isDefined) params.get else Map()
-		val request = url(effectiveUrl).setMethod(verbs.method).setParameters(parameters)
-		Request.send[T](request)
+		val parameters: Map[String, String] = if (params.isDefined) params.get else Map()
+		val request = url(effectiveUrl).setMethod(verbs.method)
+		val requestWithParams = if (verbs.method == Verbs.GET.method) { request <<? parameters } else { request << parameters }
+		println(requestWithParams.url)
+		Request.send[T](requestWithParams)
 	}
 
 	override def getUserInfo(userId: String): Future[Response[UserInfo]] = {
@@ -61,10 +62,10 @@ class InstagramBase(accessToken: String) extends InstagramClient {
 	}
 
 	override def getUserRecentMedia(count: Option[Int] = None, minId: Option[String] = None, maxId: Option[String] = None): Future[Response[MediaFeed]] = {
-		val params: Map[String, Seq[String]] = Map(
-			QueryParam.COUNT -> Seq(count.mkString),
-			QueryParam.MIN_ID -> Seq(minId.mkString),
-			QueryParam.MAX_ID -> Seq(maxId.mkString)
+		val params: Map[String, String] = Map(
+			QueryParam.COUNT -> count.mkString,
+			QueryParam.MIN_ID -> minId.mkString,
+			QueryParam.MAX_ID -> maxId.mkString
 		)
 		request[MediaFeed](Verbs.GET, Methods.USERS_SELF_RECENT_MEDIA, Option(params))
 	}
