@@ -1,15 +1,16 @@
 package org.sInstagram.responses.common
 
 case class Pagination(
-    next_url: Option[String],
-    next_max_id: Option[String]
-) {
-  lazy val nextURL = next_url
-  lazy val nextMaxId = next_max_id
-}
+  deprecationWarning: Option[String],
+  minTagId: Option[String],
+  nextMaxId: Option[String],
+  nextMaxTagId: Option[String],
+  nextUrl: Option[String],
+  nextCursor: Option[String]
+)
 
+import com.github.tototoshi.play.json.JsonNaming
 import play.api.libs.json.Json
 object Pagination {
-  implicit val PaginationReads = Json.reads[Pagination]
-  implicit val PaginationWrites = Json.writes[Pagination]
+  implicit val PaginationFormat = JsonNaming.snakecase(Json.format[Pagination])
 }

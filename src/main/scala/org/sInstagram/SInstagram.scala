@@ -4,7 +4,7 @@ import org.sInstagram.http.{Response, Request}
 import org.sInstagram.instsagram.InstagramBase
 import dispatch._
 import org.sInstagram.model.Constants
-import org.sInstagram.responses.auth.Authentication
+import org.sInstagram.responses.auth.Auth
 import org.sInstagram.responses.comments.MediaCommentsFeed
 import org.sInstagram.responses.common.User
 import org.sInstagram.responses.locations.LocationSearchFeed
@@ -22,7 +22,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param userId Id-number of the name to get information about.
    * @return       A Future of Response[Profile].
    */
-  def userInfo(auth: Authentication, userId: String): Future[Response[UserInfo]] = {
+  def userInfo(auth: Auth, userId: String): Future[Response[UserInfo]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth, s"${Constants.API_URL}/users/$userId?$stringAuth")
     val request = url(urlString)
@@ -37,7 +37,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param maxLikeId Return media liked before this id.
    * @return          A Future of a Response of a List[Media].
    */
-  def liked(auth: Authentication, count: Option[Int] = None, maxLikeId: Option[String] = None)
+  def liked(auth: Auth, count: Option[Int] = None, maxLikeId: Option[String] = None)
   : Future[Response[List[MediaFeed]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
@@ -55,7 +55,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param count Max number of results to return.
    * @return      A Future of a Response of a List[UserSearch].
    */
-  def userSearch(auth: Authentication, name: String, count: Option[Int] = None)
+  def userSearch(auth: Auth, name: String, count: Option[Int] = None)
   : Future[Response[List[UserInfo]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
@@ -73,7 +73,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param cursor Return users after this cursor.
    * @return       A Future of a Response of a List[User].
    */
-  def follows(auth: Authentication, userId: String, count: Option[Int] = None, cursor: Option[String] = None)
+  def follows(auth: Auth, userId: String, count: Option[Int] = None, cursor: Option[String] = None)
   : Future[Response[List[User]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
@@ -91,7 +91,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param cursor Return users after this cursor.
    * @return       A Future of a Response of a List[User].
    */
-  def followedBy(auth: Authentication, userId: String, count: Option[Int] = None, cursor: Option[String] = None)
+  def followedBy(auth: Auth, userId: String, count: Option[Int] = None, cursor: Option[String] = None)
   : Future[Response[List[User]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
@@ -108,7 +108,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param cursor Return users after this cursor.
    * @return       A Future of a Response of a List[User].
    */
-  def relationshipRequests(auth: Authentication, count: Option[Int] = None, cursor: Option[String] = None)
+  def relationshipRequests(auth: Auth, count: Option[Int] = None, cursor: Option[String] = None)
   : Future[Response[List[User]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
@@ -124,7 +124,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param userId Instagram ID of the user.
    * @return       A Future of a Response of a Relationship.
    */
-  def relationship(auth: Authentication, userId: String): Future[Response[RelationshipFeed]] = {
+  def relationship(auth: Auth, userId: String): Future[Response[RelationshipFeed]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
       s"${Constants.API_URL}/users/$userId/relationship?$stringAuth")
@@ -141,7 +141,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param action       Action (follow/unfollow/block/unblock/approve/deny).
    * @return             A Future of a Response of a Relationship.
    */
-  private def updateRelationship(auth: Authentication, userId: String, action: String)
+  private def updateRelationship(auth: Auth, userId: String, action: String)
   : Future[Response[RelationshipFeed]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val actionMap = Map("action" -> action)
@@ -158,7 +158,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param userId       Instagram ID of the user.
    * @return             A Future of a Response of a Relationship.
    */
-  def relationshipFollow(auth: Authentication, userId: String)
+  def relationshipFollow(auth: Auth, userId: String)
   : Future[Response[RelationshipFeed]] = {
     updateRelationship(auth, userId, action = "follow")
   }
@@ -170,7 +170,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param userId       Instagram ID of the user.
    * @return             A Future of a Response of a Relationship.
    */
-  def relationshipUnfollow(auth: Authentication, userId: String)
+  def relationshipUnfollow(auth: Auth, userId: String)
   : Future[Response[RelationshipFeed]] = {
     updateRelationship(auth, userId, action = "unfollow")
   }
@@ -182,7 +182,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param userId       Instagram ID of the user.
    * @return             A Future of a Response of a Relationship.
    */
-  def relationshipBlock(auth: Authentication, userId: String)
+  def relationshipBlock(auth: Auth, userId: String)
   : Future[Response[RelationshipFeed]] = {
     updateRelationship(auth, userId, action = "block")
   }
@@ -194,7 +194,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param userId       Instagram ID of the user.
    * @return             A Future of a Response of a Relationship.
    */
-  def relationshipUnblock(auth: Authentication, userId: String)
+  def relationshipUnblock(auth: Auth, userId: String)
   : Future[Response[RelationshipFeed]] = {
     updateRelationship(auth, userId, action = "unblock")
   }
@@ -206,7 +206,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param userId       Instagram ID of the user.
    * @return             A Future of a Response of a Relationship.
    */
-  def relationshipApprove(auth: Authentication, userId: String)
+  def relationshipApprove(auth: Auth, userId: String)
   : Future[Response[RelationshipFeed]] = {
     updateRelationship(auth, userId, action = "approve")
   }
@@ -218,7 +218,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param userId       Instagram ID of the user.
    * @return             A Future of a Response of a Relationship.
    */
-  def relationshipIgnore(auth: Authentication, userId: String)
+  def relationshipIgnore(auth: Auth, userId: String)
   : Future[Response[RelationshipFeed]] = {
     updateRelationship(auth, userId, action = "ignore")
   }
@@ -230,7 +230,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param mediaId ID of an Instagram media.
    * @return        A Future of a Response of a Media.
    */
-  def media(auth: Authentication, mediaId: String): Future[Response[MediaFeed]] = {
+  def media(auth: Auth, mediaId: String): Future[Response[MediaFeed]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
       s"${Constants.API_URL}/media/$mediaId?$stringAuth")
@@ -248,7 +248,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
                       Its corresponding shortcode is D.
    * @return          A Future of a Response of a Media.
    */
-  def mediaShortcode(auth: Authentication, shortcode: String): Future[Response[MediaFeed]] = {
+  def mediaShortcode(auth: Auth, shortcode: String): Future[Response[MediaFeed]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
       s"${Constants.API_URL}/media/shortcode/$shortcode?$stringAuth")
@@ -267,7 +267,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param distance     Default is 1000m (distance=1000), max distance is 5000.
    * @return             A Future of a Response of a List of Media.
    */
-  def mediaSearch(auth: Authentication, coordinates: (Double, Double), minTimestamp: Option[String] = None,
+  def mediaSearch(auth: Auth, coordinates: (Double, Double), minTimestamp: Option[String] = None,
                   maxTimestamp: Option[String] = None, distance: Option[Int] = None)
   : Future[Response[List[MediaFeed]]] = {
     val stringAuth = Authentication.toGETParams(auth)
@@ -284,7 +284,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param auth Credentials.
    * @return     A Future of a Response of a List of Media.
    */
-  def popular(auth: Authentication): Future[Response[List[MediaFeed]]] = {
+  def popular(auth: Auth): Future[Response[List[MediaFeed]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
       s"${Constants.API_URL}/media/popular?$stringAuth")
@@ -299,7 +299,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param mediaId Id-number of media object.
    * @return        A Future of a Response of a List of Comment.
    */
-  def comments(auth: Authentication, mediaId: String): Future[Response[List[MediaCommentsFeed]]] = {
+  def comments(auth: Auth, mediaId: String): Future[Response[List[MediaCommentsFeed]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
       s"${Constants.API_URL}/media/$mediaId/comments?$stringAuth")
@@ -317,7 +317,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    *                     for the list of restrictions (anti-spam).
    * @return             A Future of a Response of Option[String].
    */
-  def comment(auth: Authentication, mediaId: String, comment: String)
+  def comment(auth: Auth, mediaId: String, comment: String)
   : Future[Response[Option[String]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val commentTextMap = Map("text" -> comment)
@@ -335,7 +335,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param commentId    Id-number of the comment.
    * @return             A Future of a Response of Option[String].
    */
-  def commentDelete(auth: Authentication, mediaId: String, commentId: String)
+  def commentDelete(auth: Auth, mediaId: String, commentId: String)
   : Future[Response[Option[String]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
@@ -351,7 +351,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param mediaId Id-number of media object.
    * @return        A Future of a Response of a List of User.
    */
-  def likes(auth: Authentication, mediaId: String): Future[Response[List[User]]] = {
+  def likes(auth: Auth, mediaId: String): Future[Response[List[User]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
       s"${Constants.API_URL}/media/$mediaId/likes?$stringAuth")
@@ -366,7 +366,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param mediaId      Id-number of media object.
    * @return             A Future of a Response of Option[String].
    */
-  def like(auth: Authentication, mediaId: String)
+  def like(auth: Auth, mediaId: String)
   : Future[Response[Option[String]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
@@ -382,7 +382,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param mediaId      Id-number of media object.
    * @return             A Future of a Response of Option[String].
    */
-  def unlike(auth: Authentication, mediaId: String)
+  def unlike(auth: Auth, mediaId: String)
   : Future[Response[Option[String]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
@@ -398,7 +398,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param tag  A valid tag name without a leading #. (eg. snowy, nofilter).
    * @return     A Future of a Response of a Tag
    */
-  def tagInformation(auth: Authentication, tag: String): Future[Response[TagInfoFeed]] = {
+  def tagInformation(auth: Auth, tag: String): Future[Response[TagInfoFeed]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
       s"${Constants.API_URL}/tags/$tag?$stringAuth")
@@ -415,7 +415,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param maxTagId Return media earlier than this.
    * @return         A Future of a Response of a List of Media.
    */
-  def tagRecent(auth: Authentication, tag: String, minTagId: Option[String] = None, maxTagId: Option[String] = None)
+  def tagRecent(auth: Auth, tag: String, minTagId: Option[String] = None, maxTagId: Option[String] = None)
     : Future[Response[List[MediaFeed]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
@@ -433,7 +433,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param tag  A valid tag name without a leading #. (eg. snowy, nofilter).
    * @return     A Future of a Response of a List of Tag.
    */
-  def tagSearch(auth: Authentication, tag: String): Future[Response[List[TagInfoFeed]]] = {
+  def tagSearch(auth: Auth, tag: String): Future[Response[List[TagInfoFeed]]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
       s"${Constants.API_URL}/tags/search?q=$tag&$stringAuth")
@@ -448,7 +448,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param locationId ID-number of the location.
    * @return           A Future of a Response of a LocationSearch.
    */
-  def location(auth: Authentication, locationId: String): Future[Response[LocationSearchFeed]] = {
+  def location(auth: Auth, locationId: String): Future[Response[LocationSearchFeed]] = {
     val stringAuth = Authentication.toGETParams(auth)
     val urlString = addSecureSigIfNeeded(auth,
       s"${Constants.API_URL}/locations/$locationId?$stringAuth")
@@ -468,7 +468,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    * @param maxId        Return media earlier than this.
    * @return             A Future of a Response of a List of Media.
    */
-  def locationMedia(auth: Authentication, locationId: String, minTimestamp: Option[String] = None,
+  def locationMedia(auth: Auth, locationId: String, minTimestamp: Option[String] = None,
                     maxTimestamp: Option[String] = None, minId: Option[String] = None,
                     maxId: Option[String] = None)
   : Future[Response[List[MediaFeed]]] = {
@@ -493,7 +493,7 @@ class SInstagram(accessToken: String) extends InstagramBase(accessToken) {
    *                         If used, you are not required to use lat and lng.
    * @return                 A Future of a Response of a List of LocationSearch.
    */
-  def locationSearch(auth: Authentication, coordinates: Option[(Double, Double)], distance: Option[Int] = None,
+  def locationSearch(auth: Auth, coordinates: Option[(Double, Double)], distance: Option[Int] = None,
                      facebookPlacesId: Option[String] = None, foursquareV2Id: Option[String] = None)
   : Future[Response[List[LocationSearchFeed]]] = {
     val stringAuth = Authentication.toGETParams(auth)

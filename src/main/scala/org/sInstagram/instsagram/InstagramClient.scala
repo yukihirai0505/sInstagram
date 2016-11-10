@@ -64,7 +64,7 @@ trait InstagramClient {
 		* if any error occurs
 		*/
 	@throws(classOf[InstagramException])
-	def getRecentMediaFeed(userId: Option[String], count: Option[Int], minId: Option[String], maxId: Option[String]): MediaFeed
+	def getRecentMediaFeed(userId: String, count: Option[Int], minId: Option[String], maxId: Option[String]): Future[Response[MediaFeed]]
 
 	/**
 		* Get the next page of recent media objects from a previously executed
@@ -75,6 +75,15 @@ trait InstagramClient {
 		*/
 	@throws(classOf[InstagramException])
 	def getRecentMediaNextPage(pagination: Option[Pagination]): Future[Response[MediaFeed]]
+
+	/**
+		* Get the next page of user feed objects from a previously executed request
+		*
+		* @param pagination
+		* @throws InstagramException
+		*/
+	@throws(classOf[InstagramException])
+	def getUserFeedInfoNextPage(pagination: Pagination): Future[Response[UserFeed]]
 
 	/**
 		* Get the authenticated user's list of media they've liked.
@@ -130,7 +139,7 @@ trait InstagramClient {
 		* if any error occurs.
 		*/
 	@throws(classOf[InstagramException])
-	def getUserFollowList(userId: Option[String]): Future[Response[UserFeed]]
+	def getUserFollowList(userId: String): Future[Response[UserFeed]]
 
 	/**
 		* Get the next page for list of 'users' the authenticated user follows.
@@ -138,7 +147,7 @@ trait InstagramClient {
 		* @throws InstagramException
 		*/
 	@throws(classOf[InstagramException])
-	def getUserFollowListNextPage(userId: Option[String], cursor: Option[String]): Future[Response[UserFeed]]
+	def getUserFollowListNextPage(userId: String, cursor: Option[String]): Future[Response[UserFeed]]
 
 	/**
 		* Get the next page for list of 'users' the authenticated user follows.
@@ -147,7 +156,7 @@ trait InstagramClient {
 		* @throws InstagramException
 		*/
 	@throws(classOf[InstagramException])
-	def getUserFollowListNextPage(pagination: Option[Pagination]): Future[Response[UserFeed]]
+	def getUserFollowListNextPageByPage(pagination: Option[Pagination]): Future[Response[UserFeed]]
 
 	/**
 		* Get the list of 'users' the current given user is followed by.
@@ -281,7 +290,7 @@ trait InstagramClient {
 		* if any error occurs.
 		*/
 	@throws(classOf[InstagramException])
-	def getMediaComments(mediaId: Option[String]): Future[Response[MediaCommentsFeed]]
+	def getMediaComments(mediaId: String): Future[Response[MediaCommentsFeed]]
 
 	/**
 		* Create a comment on a media.

@@ -3,21 +3,22 @@ package org.sInstagram.instsagram
 import com.netaporter.uri.Uri._
 import dispatch._
 import org.sInstagram.Authentication
-import org.sInstagram.http.{Verbs, Response, Request}
-import org.sInstagram.model.{Relationship, QueryParam, Methods, Constants}
-import org.sInstagram.responses.auth.Authentication
-import org.sInstagram.responses.comments.{MediaCommentsFeed, MediaCommentResponse}
+import org.sInstagram.http.{Request, Response, Verbs}
+import org.sInstagram.model.{Constants, Methods, QueryParam, Relationship}
+import org.sInstagram.responses.auth.{Auth, SignedAccessToken}
+import org.sInstagram.responses.comments.{MediaCommentResponse, MediaCommentsFeed}
 import org.sInstagram.responses.common.Pagination
 import org.sInstagram.responses.likes.LikesFeed
 import org.sInstagram.responses.locations.{LocationInfo, LocationSearchFeed}
-import org.sInstagram.responses.media.{MediaInfoFeed, MediaFeed}
+import org.sInstagram.responses.media.{MediaFeed, MediaInfoFeed}
 import org.sInstagram.responses.relationships.RelationshipFeed
 import org.sInstagram.responses.tags.{TagInfoFeed, TagSearchFeed}
 import org.sInstagram.responses.users.basicinfo.UserInfo
-import org.sInstagram.responses.auth.SignedAccessToken
 import org.sInstagram.responses.users.feed.UserFeed
-import org.sInstagram.utils.Preconditions
+import org.sInstagram.utils.{PaginationHelper, Preconditions}
 import play.api.libs.json.Reads
+
+import scala.language.postfixOps
 
 
 /**
@@ -26,7 +27,7 @@ import play.api.libs.json.Reads
 class InstagramBase(accessToken: String) extends InstagramClient {
 	protected val USER_ID_CANNOT_BE_NULL_OR_EMPTY: String = "UserId cannot be null or empty."
 
-	protected def addSecureSigIfNeeded(auth: Authentication, url: String, postData: Option[Map[String,String]] = None)
+	protected def addSecureSigIfNeeded(auth: Auth, url: String, postData: Option[Map[String,String]] = None)
 	: String = auth match {
 		case SignedAccessToken(_, secret) =>
 			val uri = parse(url)
@@ -42,11 +43,11 @@ class InstagramBase(accessToken: String) extends InstagramClient {
 		case _ => params
 	}
 
-	def request[T](verbs: Verbs, apiPath: String, params: Option[Map[String, String]] = None)(implicit r: Reads[T]): Future[Response[T]] = {
+	def request[T](verb: Verbs, apiPath: String, params: Option[Map[String, String]] = None)(implicit r: Reads[T]): Future[Response[T]] = {
 		val effectiveUrl = s"${Constants.API_URL}$apiPath?access_token=$accessToken"
 		val parameters: Map[String, String] = if (params.isDefined) params.get else Map()
-		val request = url(effectiveUrl).setMethod(verbs.method)
-		val requestWithParams = if (verbs.method == Verbs.GET.method) { request <<? parameters } else { request << parameters }
+		val request = url(effectiveUrl).setMethod(verb.label)
+		val requestWithParams = if (verb.label == Verbs.GET.label) { request <<? parameters } else { request << parameters }
 		println(requestWithParams.url)
 		Request.send[T](requestWithParams)
 	}
@@ -70,15 +71,37 @@ class InstagramBase(accessToken: String) extends InstagramClient {
 		request[MediaFeed](Verbs.GET, Methods.USERS_SELF_RECENT_MEDIA, Option(params))
 	}
 
-	override def getRecentMediaFeed(userId: Option[String], count: Option[Int], minId: Option[String], maxId: Option[String]): MediaFeed = ???
+	override def getRecentMediaFeed(userId: String, count: Option[Int] = None, minId: Option[String] = None, maxId: Option[String] = None): Future[Response[MediaFeed]] = {
+    Preconditions.checkEmptyString(userId, USER_ID_CANNOT_BE_NULL_OR_EMPTY)
+    val params: Map[String, String] = Map(
+      QueryParam.COUNT -> count.mkString,
+      QueryParam.MIN_ID -> minId.mkString,
+      QueryParam.MAX_ID -> maxId.mkString
+    )
+    val apiPath: String = Methods.USERS_RECENT_MEDIA format userId
+    request[MediaFeed](Verbs.GET, apiPath, Option(params))
+	}
 
-	override def getMediaComments(mediaId: Option[String]): Future[Response[MediaCommentsFeed]] = ???
+	override def getMediaComments(mediaId: String): Future[Response[MediaCommentsFeed]] = {
+    val apiPath: String = Methods.MEDIA_COMMENTS format mediaId
+    request[MediaCommentsFeed](Verbs.GET, apiPath)
+  }
+	override def getUserFollowList(userId: String): Future[Response[UserFeed]] = {
+    getUserFollowListNextPage(userId)
+  }
 
-	override def getUserFollowList(userId: Option[String]): Future[Response[UserFeed]] = ???
+	override def getUserFollowListNextPage(userId: String, cursor: Option[String] = None): Future[Response[UserFeed]] = {
+    Preconditions.checkEmptyString(userId, USER_ID_CANNOT_BE_NULL_OR_EMPTY)
+    val params: Map[String, String] = Map(
+      QueryParam.CURSOR -> cursor.mkString
+    )
+    val apiPath: String = Methods.USERS_ID_FOLLOWS format userId
+    request[UserFeed](Verbs.GET, apiPath, Option(params))
+  }
 
-	override def getUserFollowListNextPage(userId: Option[String], cursor: Option[String]): Future[Response[UserFeed]] = ???
-
-	override def getUserFollowListNextPage(pagination: Option[Pagination]): Future[Response[UserFeed]] = ???
+	override def getUserFollowListNextPageByPage(pagination: Option[Pagination]): Future[Response[UserFeed]] = {
+    getUserFeedInfoNextPage(pagination.get)
+  }
 
 	override def getUserLikedMediaFeed: Future[Response[MediaFeed]] = ???
 
@@ -106,7 +129,12 @@ class InstagramBase(accessToken: String) extends InstagramClient {
 
 	override def getRecentMediaNextPage(pagination: Option[Pagination]): Future[Response[MediaFeed]] = ???
 
-	override def deleteUserLike(mediaId: Option[String]): Future[Response[LikesFeed]] = ???
+  override def getUserFeedInfoNextPage(pagination: Pagination): Future[Response[UserFeed]] = {
+    val page: PaginationHelper.Page = PaginationHelper.parseNextUrl(pagination, Constants.API_URL)
+    request[UserFeed](Verbs.GET, page.apiPath, Option(page.queryStringParams))
+  }
+
+  override def deleteUserLike(mediaId: Option[String]): Future[Response[LikesFeed]] = ???
 
 	override def searchFoursquareVenue(foursquareId: Option[String]): Future[Response[LocationSearchFeed]] = ???
 

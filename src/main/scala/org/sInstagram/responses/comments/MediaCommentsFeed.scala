@@ -7,7 +7,7 @@ import org.sInstagram.responses.common.Meta
 	* author Yuki Hirai on 2016/11/09.
 	*/
 case class MediaCommentsFeed(
-  data: Option[CommentData],
+  data: Option[List[CommentData]],
 	meta: Option[Meta]
 ) extends InstagramObject
 

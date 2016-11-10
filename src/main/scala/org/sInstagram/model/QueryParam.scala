@@ -22,4 +22,5 @@ object QueryParam {
 	val MAX_TAG_ID: String = "max_tag_id"
 	val MIN_TAG_ID: String = "min_tag_id"
 	val SIGNATURE: String = "sig"
+	val CURSOR: String = "cursor"
 }

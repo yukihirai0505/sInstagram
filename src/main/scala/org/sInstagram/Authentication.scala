@@ -19,7 +19,7 @@ object Authentication {
    * @param a Authentication
    * @return  String
    */
-  def toGETParams(a: Authentication): String = a match {
+  def toGETParams(a: Auth): String = a match {
     case ClientId(id) => s"client_id=$id"
     case AccessToken(token) => s"access_token=$token"
     case SignedAccessToken(token, _) => s"access_token=$token"
@@ -31,7 +31,7 @@ object Authentication {
    * @param a Authentication
    * @return  Boolean
    */
-  def isSecure(a: Authentication): Boolean = a match {
+  def isSecure(a: Auth): Boolean = a match {
     case SignedAccessToken(_, _) => true
     case _ => false
   }
@@ -139,7 +139,7 @@ object Authentication {
    * @param code         Authentication code. You can retrieve it via codeURL.
    * @return             Future of Response[Authentication]
    */
-  def requestToken(clientId: String, clientSecret: String, redirectURI: String, code: String): Future[Response[Authentication]] = {
+  def requestToken(clientId: String, clientSecret: String, redirectURI: String, code: String): Future[Response[Auth]] = {
     val args = Map(
       "client_id" -> clientId, "client_secret" -> clientSecret, "redirect_uri" -> redirectURI,
       "code" -> code, "grant_type" -> "authorization_code"
