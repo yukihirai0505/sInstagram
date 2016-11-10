@@ -4,8 +4,8 @@ import org.sInstagram.instsagram.InstagramObject
 import org.sInstagram.responses.common.Meta
 
 /**
-	* author Yuki Hirai on 2016/11/09.
-	*/
+  * author Yuki Hirai on 2016/11/09.
+  */
 case class RelationshipFeed(
   data: Option[RelationshipFeedData],
   meta: Option[Meta]
@@ -14,6 +14,6 @@ case class RelationshipFeed(
 
 import play.api.libs.json.Json
 object RelationshipFeed {
-	implicit val RelationshipFeedFormat = Json.format[RelationshipFeed]
+  implicit val RelationshipFeedFormat = Json.format[RelationshipFeed]
 }
 

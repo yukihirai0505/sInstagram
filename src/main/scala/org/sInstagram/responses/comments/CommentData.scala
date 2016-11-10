@@ -1,8 +1,8 @@
 package org.sInstagram.responses.comments
 
 /**
-	* author Yuki Hirai on 2016/11/09.
-	*/
+  * author Yuki Hirai on 2016/11/09.
+  */
 case class CommentData(
   form: Option[String],
   createdTime: Option[String],
@@ -14,5 +14,5 @@ import com.github.tototoshi.play.json.JsonNaming
 import play.api.libs.json.Json
 
 object CommentData {
-	implicit val CommentDataFormat = JsonNaming.snakecase(Json.format[CommentData])
+  implicit val CommentDataFormat = JsonNaming.snakecase(Json.format[CommentData])
 }

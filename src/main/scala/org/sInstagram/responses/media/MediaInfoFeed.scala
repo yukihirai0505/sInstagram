@@ -4,8 +4,8 @@ import org.sInstagram.instsagram.InstagramObject
 import org.sInstagram.responses.common.Meta
 
 /**
-	* author Yuki Hirai on 2016/11/09.
-	*/
+  * author Yuki Hirai on 2016/11/09.
+  */
 case class MediaInfoFeed(
   data: Option[MediaFeedData],
   meta: Option[Meta]
@@ -13,5 +13,5 @@ case class MediaInfoFeed(
 
 import play.api.libs.json.Json
 object MediaInfoFeed {
-	implicit val MediaInfoFeedFormat = Json.format[MediaInfoFeed]
+  implicit val MediaInfoFeedFormat = Json.format[MediaInfoFeed]
 }

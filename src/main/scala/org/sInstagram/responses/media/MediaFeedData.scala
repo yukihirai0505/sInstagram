@@ -5,8 +5,8 @@ import org.sInstagram.responses.common._
 import play.api.libs.json.Json
 
 /**
-	* author Yuki Hirai on 2016/11/09.
-	*/
+  * author Yuki Hirai on 2016/11/09.
+  */
 case class MediaFeedData(
   caption: Option[Caption],
   comments: Option[Comments],
@@ -21,5 +21,5 @@ case class MediaFeedData(
   tags: Option[List[String]]
 )
 object MediaFeedData {
-	implicit val MediaFeedFormat = JsonNaming.snakecase(Json.format[MediaFeedData])
+  implicit val MediaFeedFormat = JsonNaming.snakecase(Json.format[MediaFeedData])
 }

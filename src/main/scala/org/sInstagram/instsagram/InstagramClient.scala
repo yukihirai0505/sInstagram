@@ -270,7 +270,7 @@ trait InstagramClient {
   def getTagInfo(tagName: String): Future[Response[TagInfoFeed]]
 
   /**
-	  * Search for tags by name - results are ordered first as an exact match,
+    * Search for tags by name - results are ordered first as an exact match,
     * then by popularity.
     *
     * @param tagName

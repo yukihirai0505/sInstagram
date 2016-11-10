@@ -4,8 +4,8 @@ import com.github.tototoshi.play.json.JsonNaming
 import play.api.libs.json.Json
 
 /**
-	* author Yuki Hirai on 2016/11/09.
-	*/
+  * author Yuki Hirai on 2016/11/09.
+  */
 case class UserInfoData(
   bio: Option[String],
   counts: Option[Counts],
@@ -17,5 +17,5 @@ case class UserInfoData(
 )
 
 object UserInfoData {
-	implicit val UserInfoDataFormat = JsonNaming.snakecase(Json.format[UserInfoData])
+  implicit val UserInfoDataFormat = JsonNaming.snakecase(Json.format[UserInfoData])
 }

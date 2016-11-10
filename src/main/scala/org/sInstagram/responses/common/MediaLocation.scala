@@ -15,4 +15,3 @@ import play.api.libs.json.Json
 object MediaLocation {
   implicit val MediaLocationFormat = Json.format[MediaLocation]
 }
-

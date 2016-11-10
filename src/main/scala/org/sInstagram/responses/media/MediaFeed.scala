@@ -4,8 +4,8 @@ import org.sInstagram.instsagram.InstagramObject
 import org.sInstagram.responses.common._
 
 /**
-	* author Yuki Hirai on 2016/11/09.
-	*/
+  * author Yuki Hirai on 2016/11/09.
+  */
 case class MediaFeed(
   data: Option[List[MediaFeedData]],
   pagination: Option[Pagination],
@@ -14,5 +14,5 @@ case class MediaFeed(
 
 import play.api.libs.json.Json
 object MediaFeed {
-	implicit val MediaFeedFormat = Json.format[MediaFeed]
+  implicit val MediaFeedFormat = Json.format[MediaFeed]
 }

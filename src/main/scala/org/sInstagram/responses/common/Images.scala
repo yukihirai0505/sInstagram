@@ -2,8 +2,8 @@ package org.sInstagram.responses.common
 
 case class Images(
   lowResolution: Image,
-	thumbnail: Image,
-	standardResolution: Image
+  thumbnail: Image,
+  standardResolution: Image
 )
 
 import com.github.tototoshi.play.json.JsonNaming

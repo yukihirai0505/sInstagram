@@ -2,8 +2,8 @@ package org.sInstagram.responses.common
 
 case class Meta(
   errorType: Option[String],
-	code: Int,
-	errorMessage: Option[String]
+  code: Int,
+  errorMessage: Option[String]
 )
 
 import com.github.tototoshi.play.json.JsonNaming

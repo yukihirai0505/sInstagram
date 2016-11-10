@@ -18,7 +18,7 @@ object Request {
    * @return        a Future of Response[T]
    */
   def send[T](request: Req)(implicit r: Reads[T]): Future[Response[T]] = {
-		Http(request).map { resp =>
+    Http(request).map { resp =>
       val response = resp.getResponseBody
       val headers = ningHeadersToMap(resp.getHeaders)
       if (resp.getStatusCode != 200) throw new Exception(parseMeta(response).toString)
