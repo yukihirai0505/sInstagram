@@ -17,7 +17,7 @@ case class MediaFeedData(
   videos: Option[Videos],
   likes: Option[Likes],
   link: Option[String],
-  location: Option[Location],
+  location: Option[MediaLocation],
   tags: Option[List[String]]
 )
 object MediaFeedData {

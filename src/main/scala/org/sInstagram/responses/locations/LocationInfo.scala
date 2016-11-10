@@ -1,12 +1,13 @@
 package org.sInstagram.responses.locations
 
-import org.sInstagram.responses.common.Location
+import org.sInstagram.responses.common.{Location, Meta}
 
 /**
 	* author Yuki Hirai on 2016/11/09.
 	*/
 case class LocationInfo(
-  data: Option[Location]
+  data: Option[Location],
+  meta: Option[Meta]
 )
 
 

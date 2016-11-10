@@ -37,4 +37,48 @@ object Methods {
     * Required scope: relationships
     */
   val USERS_ID_FOLLOWS: String = "/users/%s/follows"
+  /**
+    * See the authenticated user's list of media they've liked. Note that this
+    * list is ordered by the order in which the user liked the media. Private
+    * media is returned as long as the authenticated user has permission to
+    * view that media. Liked media lists are only available for the currently
+    * authenticated user.
+    */
+  val USERS_SELF_LIKED_MEDIA: String = "/users/self/media/liked"
+
+  /**
+    * Search for a user by name.
+    */
+  val USERS_SEARCH: String = "/users/search"
+
+  /**
+    * Get a list of users who have liked this media.
+    *
+    * Required scope : likes
+    */
+  val LIKES_BY_MEDIA_ID: String = "/media/%s/likes"
+
+  /**
+    * Get information about a location.
+    */
+  val LOCATIONS_BY_ID: String = "/locations/%s"
+
+  /**
+    * Search for a location by geographic coordinate.
+    */
+  val LOCATIONS_SEARCH: String = "/locations/search"
+  /**
+    * Get a list of recent media objects from a given location.
+    */
+  val LOCATIONS_RECENT_MEDIA_BY_ID: String = "/locations/%s/media/recent"
+
+  /**
+    * Get information about a media object.
+    */
+  val MEDIA_BY_ID: String = "/media/%s"
+
+  /**
+    * Get information about a tag object.
+    */
+  val TAGS_BY_NAME: String = "/tags/%s"
 }

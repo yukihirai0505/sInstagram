@@ -15,4 +15,6 @@ object Constants {
 	val SCOPED_AUTHORIZE_URL = s"$AUTHORIZE_URL&scope=%s"
 
 	val API_URL: String = s"$BASE_URL/$VERSION"
+
+	val LOCATION_DEFAULT_DISTANCE = "500"
 }
