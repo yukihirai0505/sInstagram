@@ -5,10 +5,10 @@ package org.sInstagram.model
 	*/
 sealed abstract class Relationship(val value: String)
 object Relationship {
-	case object FOLLOW extends Relationship("FOLLOW")
-	case object UN_FOLLOW extends Relationship("UN_FOLLOW")
-	case object BLOCK extends Relationship("BLOCK")
-	case object UN_BLOCK extends Relationship("UN_BLOCK")
-	case object APPROVE extends Relationship("APPROVE")
-	case object DENY extends Relationship("DENY")
+	case object FOLLOW extends Relationship("follow")
+	case object UN_FOLLOW extends Relationship("unfollow")
+	case object BLOCK extends Relationship("block")
+	case object UN_BLOCK extends Relationship("unblock")
+	case object APPROVE extends Relationship("approve")
+	case object IGNORE extends Relationship("ignore")
 }

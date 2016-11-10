@@ -174,33 +174,88 @@ class InstagramBase(accessToken: String) extends InstagramClient {
     request[LikesFeed](Verbs.DELETE, apiPath)
   }
 
-	override def searchFoursquareVenue(foursquareId: Option[String]): Future[Response[LocationSearchFeed]] = ???
+	override def deleteMediaCommentById(mediaId: String, commentId: String): Future[Response[MediaCommentResponse]] = {
+    val apiPath: String = Methods.DELETE_MEDIA_COMMENTS format (mediaId, commentId)
+    request[MediaCommentResponse](Verbs.DELETE, apiPath)
+  }
 
-	override def deleteMediaCommentById(mediaId: Option[String], commentId: Option[String]): Future[Response[MediaCommentResponse]] = ???
+	override def getUserFollowedByList(userId: String, cursor: Option[String] = None): Future[Response[UserFeed]] = {
+    val params: Map[String, String] = Map(
+      QueryParam.CURSOR -> cursor.mkString
+    )
+    val apiPath: String = Methods.USERS_ID_FOLLOWED_BY format userId
+    request[UserFeed](Verbs.GET, apiPath, Option(params))
+  }
 
-	override def getUserFollowedByListNextPage(userId: Option[String], cursor: Option[String]): Future[Response[UserFeed]] = ???
+	override def getUserFollowedByListNextPage(pagination: Pagination): Future[Response[UserFeed]] = {
+    getUserFeedInfoNextPage(pagination)
+  }
 
-	override def getUserFollowedByListNextPage(pagination: Option[Pagination]): Future[Response[UserFeed]] = ???
+	override def setMediaComments(mediaId: String, text: String): Future[Response[MediaCommentResponse]] = {
+    val params: Map[String, String] = Map(
+      QueryParam.TEXT -> text
+    )
+    val apiPath: String = Methods.MEDIA_COMMENTS format mediaId
+    request[MediaCommentResponse](Verbs.POST, apiPath, Option(params))
+  }
 
-	override def setMediaComments(mediaId: Option[String], text: Option[String]): Future[Response[MediaCommentResponse]] = ???
+	override def getMediaInfoByShortCode(shortCode: String): Future[Response[MediaInfoFeed]] = {
+    val apiPath: String = Methods.MEDIA_BY_SHORT_CODE format shortCode
+    request[MediaInfoFeed](Verbs.GET, apiPath)
+  }
 
-	override def getMediaInfoByShortCode(shortCode: Option[String]): Future[Response[MediaInfoFeed]] = ???
+	override def searchTags(tagName: String): Future[Response[TagSearchFeed]] = {
+    val params: Map[String, String] = Map(
+      QueryParam.SEARCH_QUERY -> tagName
+    )
+    request[TagSearchFeed](Verbs.GET, Methods.TAGS_SEARCH, Option(params))
+  }
 
-	override def searchTags(tagName: Option[String]): Future[Response[TagSearchFeed]] = ???
+  override def getRecentMediaFeedTags(tagName: String, minTagId: Option[String] = None, maxTagId: Option[String] = None, count: Option[Long] = None): Future[Response[MediaFeed]] = {
+    val apiPath: String = Methods.TAGS_RECENT_MEDIA format tagName
+    val params: Map[String, String] = Map(
+      QueryParam.MIN_TAG_ID -> minTagId.mkString,
+      QueryParam.MAX_TAG_ID -> maxTagId.mkString,
+      QueryParam.COUNT -> count.mkString
+    )
+    request[MediaFeed](Verbs.GET, apiPath, Option(params))
+  }
 
-	override def setUserRelationship(userId: Option[String], relationship: Option[Relationship]): Future[Response[RelationshipFeed]] = ???
+	override def setUserRelationship(userId: String, relationship: Relationship): Future[Response[RelationshipFeed]] = {
+    val params: Map[String, String] = Map(
+      QueryParam.ACTION -> relationship.value
+    )
+    val apiPath: String = Methods.USERS_ID_RELATIONSHIP format userId
+    request[RelationshipFeed](Verbs.POST, apiPath, Option(params))
+  }
 
-	override def getUserFollowedByList(userId: Option[String]): Future[Response[UserFeed]] = ???
+	override def getUserRequestedBy: Future[Response[UserFeed]] = {
+    request[UserFeed](Verbs.GET, Methods.USERS_SELF_REQUESTED_BY)
+  }
 
-	override def getUserRequestedBy: Future[Response[UserFeed]] = ???
+	override def getUserRelationship(userId: String): Future[Response[RelationshipFeed]] = {
+    val apiPath: String = Methods.USERS_ID_RELATIONSHIP format userId
+    request[RelationshipFeed](Verbs.GET, apiPath)
+  }
 
-	override def getUserRelationship(userId: Option[String]): Future[Response[RelationshipFeed]] = ???
+	override def searchFacebookPlace(facebookPlacesId: String): Future[Response[LocationSearchFeed]] = {
+    val params: Map[String, String] = Map(
+      QueryParam.FACEBOOK_PLACES_ID -> facebookPlacesId
+    )
+    request[LocationSearchFeed](Verbs.GET, Methods.LOCATIONS_SEARCH, Option(params))
+  }
 
-	override def searchFacebookPlace(facebookPlacesId: Option[String]): Future[Response[LocationSearchFeed]] = ???
+	override def searchMedia(latitude: Double, longitude:Double, distance: Option[Int] = None): Future[Response[MediaFeed]] = {
+    val params: Map[String, String] = Map(
+      QueryParam.LATITUDE -> latitude.toString,
+      QueryParam.LONGITUDE -> longitude.toString,
+      QueryParam.DISTANCE -> distance.mkString
+    )
+    request[MediaFeed](Verbs.GET, Methods.MEDIA_SEARCH, Option(params))
+  }
 
-	override def searchMedia(latitude: Option[Double], longitude: Option[Double], distance: Option[Int]): Future[Response[MediaFeed]] = ???
-
-	override def getRecentMediaFeedTags(tagName: Option[String], minTagId: Option[String], maxTagId: Option[String], count: Option[Long]): Future[Response[MediaFeed]] = ???
-
-	override def getUserLikes(mediaId: Option[String]): Future[Response[LikesFeed]] = ???
+	override def getUserLikes(mediaId: String): Future[Response[LikesFeed]] = {
+    val apiPath: String = Methods.LIKES_BY_MEDIA_ID format mediaId
+    request[LikesFeed](Verbs.GET, apiPath)
+  }
 }
