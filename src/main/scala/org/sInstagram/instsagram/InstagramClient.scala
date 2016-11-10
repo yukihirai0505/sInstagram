@@ -196,18 +196,6 @@ trait InstagramClient {
 		* Latitude of the center search coordinate.
 		* @param longitude
 		* Longitude of the center search coordinate.
-		* @return a MediaFeed object.
-		* if any error occurs
-		*/
-	def searchMedia(latitude: Option[Double], longitude: Option[Double]): Future[Response[MediaFeed]]
-
-	/**
-		* Search for media in a given area.
-		*
-		* @param latitude
-		* Latitude of the center search coordinate.
-		* @param longitude
-		* Longitude of the center search coordinate.
 		* @param distance
 		* Default is 1km (distance=1000), max distance is 5km.
 		* @return a MediaFeed object.
@@ -294,45 +282,6 @@ trait InstagramClient {
 	/**
 		* Get a list of recently tagged media.
 		*
-		* @param tagName { @link String}
-		*                        the name of the tag
-		* @return { @link MediaFeed}
-		*                 the media feed for the first page
-		* if any error occurs.
-		*/
-	def getRecentMediaFeedTags(tagName: Option[String]): Future[Response[MediaFeed]]
-
-	/**
-		* Get at most <em>count</em> number of recently tagged media.
-		*
-		* @param tagName { @link String}
-		*                        the name of the tag
-		* @param count { @code int}
-		*                      set to 0 to use default
-		* @return { @link MediaFeed}
-		*                 the media feed for the first page
-		* if any error occurs.
-		*/
-	def getRecentMediaFeedTags(tagName: Option[String], count: Option[Long]): Future[Response[MediaFeed]]
-
-	/**
-		* Get a list of recently tagged media.
-		*
-		* @param tagName
-		* name of the tag.
-		* @param minTagId
-		* (return media before this tag_id), can be null
-		* @param maxTagId
-		* (return media before this tag_id), can be null
-		* @return { @link MediaFeed}
-		*                 the media feed for the first page
-		* if any error occurs.
-		*/
-	def getRecentMediaFeedTags(tagName: Option[String], minTagId: Option[String], maxTagId: Option[String]): Future[Response[MediaFeed]]
-
-	/**
-		* Get a list of recently tagged media.
-		*
 		* @param tagName
 		*              name of the tag.
 		* @param minTagId
@@ -346,17 +295,6 @@ trait InstagramClient {
 		* if any error occurs.
 		*/
 	def getRecentMediaFeedTags(tagName: Option[String], minTagId: Option[String], maxTagId: Option[String], count: Option[Long]): Future[Response[MediaFeed]]
-
-	/**
-		* Get a list of recently tagged media.
-		*
-		* @param tagName
-		* name of the tag.
-		* @return { @link MediaFeed}
-		*                 the media feed for the first page
-		* if any error occurs.
-		*/
-	def getRecentMediaFeedTagsByRegularIds(tagName: Option[String], minId: Option[String], maxId: Option[String]): Future[Response[MediaFeed]]
 
 	/**
 		* Search for tags by name - results are ordered first as an exact match,

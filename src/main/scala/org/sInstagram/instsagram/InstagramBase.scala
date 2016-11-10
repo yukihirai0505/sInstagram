@@ -198,17 +198,7 @@ class InstagramBase(accessToken: String) extends InstagramClient {
 
 	override def searchFacebookPlace(facebookPlacesId: Option[String]): Future[Response[LocationSearchFeed]] = ???
 
-	override def searchMedia(latitude: Option[Double], longitude: Option[Double]): Future[Response[MediaFeed]] = ???
-
 	override def searchMedia(latitude: Option[Double], longitude: Option[Double], distance: Option[Int]): Future[Response[MediaFeed]] = ???
-
-	override def getRecentMediaFeedTagsByRegularIds(tagName: Option[String], minId: Option[String], maxId: Option[String]): Future[Response[MediaFeed]] = ???
-
-	override def getRecentMediaFeedTags(tagName: Option[String]): Future[Response[MediaFeed]] = ???
-
-	override def getRecentMediaFeedTags(tagName: Option[String], count: Option[Long]): Future[Response[MediaFeed]] = ???
-
-	override def getRecentMediaFeedTags(tagName: Option[String], minTagId: Option[String], maxTagId: Option[String]): Future[Response[MediaFeed]] = ???
 
 	override def getRecentMediaFeedTags(tagName: Option[String], minTagId: Option[String], maxTagId: Option[String], count: Option[Long]): Future[Response[MediaFeed]] = ???
 
