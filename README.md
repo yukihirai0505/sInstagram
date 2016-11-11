@@ -6,7 +6,7 @@
 
 Add the sInstagram dependency:
 
-```
+```scala
 libraryDependencies += "com.yukihirai0505" % "sinstagram_2.11" % "0.0.1"
 ```
 
