@@ -4,6 +4,13 @@ package org.sInstagram.model
   * author Yuki Hirai on 2016/11/09.
   */
 object QueryParam {
+  /* auth */
+  val CLIENT_ID: String = "client_id"
+  val CLIENT_SECRET: String = "client_secret"
+  val REDIRECT_URI: String = "redirect_uri"
+  val CODE: String = "code"
+  val GRANT_TYPE: String = "grant_type"
+  /* method */
   val ACTION: String = "action"
   val COUNT: String = "count"
   val DISTANCE: String = "distance"

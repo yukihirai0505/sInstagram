@@ -1,15 +1,18 @@
 package org.sInstagram
 
-import org.sInstagram.http.Response
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+
 import com.ning.http.client.FluentCaseInsensitiveStringsMap
-import dispatch._, Defaults._
+import dispatch.Defaults._
+import dispatch._
+import org.sInstagram.http.Response
+import org.sInstagram.model.{Constants, QueryParam}
 import org.sInstagram.responses.auth._
 import org.sInstagram.responses.common.Meta
 import play.api.libs.json.Json
 
 import scala.collection.JavaConverters._
-import javax.crypto.spec.SecretKeySpec
-import javax.crypto.Mac
 
 object Authentication {
 
@@ -140,11 +143,14 @@ object Authentication {
    * @return             Future of Response[Authentication]
    */
   def requestToken(clientId: String, clientSecret: String, redirectURI: String, code: String): Future[Response[Auth]] = {
-    val args = Map(
-      "client_id" -> clientId, "client_secret" -> clientSecret, "redirect_uri" -> redirectURI,
-      "code" -> code, "grant_type" -> "authorization_code"
+    val params = Map(
+      QueryParam.CLIENT_ID -> clientId,
+      QueryParam.CLIENT_SECRET -> clientSecret,
+      QueryParam.REDIRECT_URI -> redirectURI,
+      QueryParam.CODE -> code,
+      QueryParam.GRANT_TYPE -> Constants.GRANT_TYPE
     )
-    val request = url("https://api.instagram.com/oauth/access_token") << args
+    val request = url(Constants.ACCESS_TOKEN_ENDPOINT) << params
     Http(request).map { resp =>
       val response = resp.getResponseBody
       val headers = ningHeadersToMap(resp.getHeaders)

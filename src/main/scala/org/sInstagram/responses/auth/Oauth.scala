@@ -1,13 +1,9 @@
 package org.sInstagram.responses.auth
 
-import org.sInstagram.responses.common.User
+case class Oauth(accessToken: String)
 
-case class Oauth(access_token: String, user: User) {
-  lazy val accessToken = access_token
-}
-
+import com.github.tototoshi.play.json.JsonNaming
 import play.api.libs.json.Json
 object Oauth {
-  implicit val OauthReads = Json.reads[Oauth]
-  implicit val OauthWrites = Json.writes[Oauth]
+  implicit val OauthFormat = JsonNaming.snakecase(Json.format[Oauth])
 }

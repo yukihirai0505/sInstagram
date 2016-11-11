@@ -1,10 +1,10 @@
 package org.sInstagram.responses.common
 
 case class User(
-  id: String,
-  username: String,
-  fullName: String,
-  profilePicture: String
+  id: Option[String],
+  username: Option[String],
+  fullName: Option[String],
+  profilePicture: Option[String]
 )
 
 import com.github.tototoshi.play.json.JsonNaming

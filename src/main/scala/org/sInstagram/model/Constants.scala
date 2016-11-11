@@ -17,4 +17,5 @@ object Constants {
   val API_URL: String = s"$BASE_URL/$VERSION"
 
   val LOCATION_DEFAULT_DISTANCE = "500"
+  val GRANT_TYPE = "authorization_code"
 }
