@@ -18,6 +18,15 @@ libraryDependencies ++= Seq(
 )
 
 publishMavenStyle := true
+
+publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+}
+
 publishArtifact in Test := false
 
 organizationName := "com.yukihirai0505"
@@ -36,8 +45,8 @@ pomExtra :=
       </license>
     </licenses>
     <scm>
-      <url>https://github.com/yukihirai0505/sInstagram.git</url>
-      <connection>scm:git:https://github.com/yukihirai0505/sInstagram.git</connection>
+      <url>git@github.com:yukihirai0505/sInstagram.git</url>
+      <connection>scm:git:git@github.com:yukihirai0505/sInstagram.git</connection>
     </scm>
     <developers>
       <developer>
