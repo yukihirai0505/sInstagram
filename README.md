@@ -46,7 +46,6 @@ future onComplete {
   } // do stuff
   case Failure(t) => println("An error has occured: " + t.getMessage)
 }
-Await.result(future, 10 seconds)
 ```
 
 Please look at this file to see all available methods:
