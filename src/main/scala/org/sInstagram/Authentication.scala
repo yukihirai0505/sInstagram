@@ -7,26 +7,14 @@ import com.ning.http.client.FluentCaseInsensitiveStringsMap
 import dispatch.Defaults._
 import dispatch._
 import org.sInstagram.http.Response
-import org.sInstagram.model.{Constants, QueryParam}
+import org.sInstagram.model.{ResponseType, Scope, Constants, OAuthConstants}
 import org.sInstagram.responses.auth._
 import org.sInstagram.responses.common.Meta
 import play.api.libs.json.Json
 
 import scala.collection.JavaConverters._
 
-object Authentication {
-
-  /**
-   * Transform an Authentication type to be used in a URL.
-   *
-   * @param a Authentication
-   * @return  String
-   */
-  def toGETParams(a: Auth): String = a match {
-    case ClientId(id) => s"client_id=$id"
-    case AccessToken(token) => s"access_token=$token"
-    case SignedAccessToken(token, _) => s"access_token=$token"
-  }
+class Authentication {
 
   /**
    * Tell if authentication type is secure.
@@ -42,35 +30,13 @@ object Authentication {
   /**
    * Scope string which will be append to the URL.
    *
-   * @param comments       Comments scope.
-   * @param relationships  Relationships scope.
-   * @param likes          Likes scope.
+   * @param scopes         Scopes
    * @return               String
    */
-  def scopes(comments: Boolean = false, relationships: Boolean = false, likes: Boolean = false): String = {
-    val scopes = List(
-      if (comments) "comments" else "",
-      if (relationships) "relationships" else "",
-      if (likes) "likes" else ""
-    ).filter(_ != "")
-
-    if (scopes.nonEmpty) scopes.mkString("scope=", "+", "")
+  def setScopes(scopes: Seq[Scope]): String = {
+    val scopeLabels: List[String] = scopes.map(s => s.label).toList
+    if (scopes.nonEmpty) scopeLabels.mkString("scope=", "+", "")
     else ""
-  }
-
-  /**
-   * Create the URL to call when retrieving an authentication code.
-   *
-   * @param clientId       Client identifier. (You need to register this on instagram.com/developer)
-   * @param redirectURI    URI which the response is sent to. (You need to register this on instagram.com/developer)
-   * @param comments       Require comment scope.
-   * @param relationships  Require relationships scope.
-   * @param likes          Require likes scope.
-   * @return               String URL.
-   */
-  def codeURL(clientId: String, redirectURI: String, comments: Boolean = false, relationships: Boolean = false, likes: Boolean = false): String = {
-    s"https://api.instagram.com/oauth/authorize/?client_id=$clientId&redirect_uri=$redirectURI" +
-    s"&response_type=code&${scopes(comments, relationships, likes)}"
   }
 
   /**
@@ -78,14 +44,11 @@ object Authentication {
    *
    * @param clientId       Client identifier. (You need to register this on instagram.com/developer)
    * @param redirectURI    URI which the response is sent to. (You need to register this on instagram.com/developer)
-   * @param comments       Require comment scope.
-   * @param relationships  Require relationships scope.
-   * @param likes          Require likes scope.
-   * @return               String URL.
+   * @param responseType   Response type code or token
+   * @param scopes         Require scope.
    */
-  def tokenURL(clientId: String, redirectURI: String, comments: Boolean = false, relationships: Boolean = false, likes: Boolean = false): String = {
-    s"https://api.instagram.com/oauth/authorize/?client_id=$clientId&redirect_uri=$redirectURI" +
-    s"&response_type=token&${scopes(comments, relationships, likes)}"
+  def authURL(clientId: String, redirectURI: String, responseType: ResponseType, scopes: Seq[Scope] = Seq()): String = {
+    ( Constants.AUTHORIZE_URL format (clientId, redirectURI, responseType.label) ) + s"&${setScopes(scopes)}"
   }
 
   /**
@@ -144,11 +107,11 @@ object Authentication {
    */
   def requestToken(clientId: String, clientSecret: String, redirectURI: String, code: String): Future[Response[Auth]] = {
     val params = Map(
-      QueryParam.CLIENT_ID -> clientId,
-      QueryParam.CLIENT_SECRET -> clientSecret,
-      QueryParam.REDIRECT_URI -> redirectURI,
-      QueryParam.CODE -> code,
-      QueryParam.GRANT_TYPE -> Constants.GRANT_TYPE
+      OAuthConstants.CLIENT_ID -> clientId,
+      OAuthConstants.CLIENT_SECRET -> clientSecret,
+      OAuthConstants.REDIRECT_URI -> redirectURI,
+      OAuthConstants.CODE -> code,
+      OAuthConstants.GRANT_TYPE -> Constants.GRANT_TYPE
     )
     val request = url(Constants.ACCESS_TOKEN_ENDPOINT) << params
     Http(request).map { resp =>

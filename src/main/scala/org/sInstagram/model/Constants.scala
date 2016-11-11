@@ -11,8 +11,7 @@ object Constants {
   private val VERSION: String = "v1"
 
   val ACCESS_TOKEN_ENDPOINT: String = s"$OAUTH_BASE_URL/access_token"
-  val AUTHORIZE_URL: String = s"$OAUTH_BASE_URL/authorize/?client_id=%s&redirect_uri=%s&response_type=code"
-  val SCOPED_AUTHORIZE_URL = s"$AUTHORIZE_URL&scope=%s"
+  val AUTHORIZE_URL: String = s"$OAUTH_BASE_URL/authorize/?client_id=%s&redirect_uri=%s&response_type=%s"
 
   val API_URL: String = s"$BASE_URL/$VERSION"
 

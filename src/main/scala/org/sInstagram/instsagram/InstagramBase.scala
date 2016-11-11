@@ -33,7 +33,8 @@ class InstagramBase(accessToken: String) extends InstagramClient {
     case SignedAccessToken(_, secret) =>
       val uri = parse(url)
       val params = uri.query.params
-      val sig = Authentication.createSignedParam(secret, uri.pathRaw.replace("/v1", ""), concatMapOpt(postData, params.toMap))
+      val auth: Authentication = new Authentication
+      val sig = auth.createSignedParam(secret, uri.pathRaw.replace("/v1", ""), concatMapOpt(postData, params.toMap))
       uri.addParam("sig", sig).toStringRaw
     case _ => url
   }
