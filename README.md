@@ -13,7 +13,6 @@ import com.yukihirai0505.{Instagram, Authentication}
 import com.yukihirai0505.http.Response
 import com.yukihirai0505.model.ResponseType
 import com.yukihirai0505.model.Scope
-import play.api.mvc.Action
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
