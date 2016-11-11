@@ -8,6 +8,8 @@ scalaVersion := "2.11.8"
 
 scalacOptions += "-feature"
 
+resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+
 libraryDependencies ++= Seq(
   "com.typesafe.play" % "play-json_2.11" % "2.5.9",
   "net.databinder.dispatch" %% "dispatch-core" % "0.11.3",
