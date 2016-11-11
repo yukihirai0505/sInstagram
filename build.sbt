@@ -1,5 +1,12 @@
-name := """sInstagram"""
+sonatypeSettings
+
+name := "sInstagram"
+
+version := "0.0.1"
+
 scalaVersion := "2.11.8"
+
+scalacOptions += "-feature"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" % "play-json_2.11" % "2.5.9",
@@ -10,4 +17,32 @@ libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.11" % "3.0.0"
 )
 
-lazy val sInstagram = project in file(".")
+publishMavenStyle := true
+publishArtifact in Test := false
+
+organizationName := "com.yukihirai0505"
+
+organizationHomepage := Some(url("https://blog.yukihirai0505.com/"))
+
+description := "A Scala library for the Instagram API"
+
+pomExtra :=
+  <url>https://github.com/yukihirai0505/sInstagram</url>
+    <licenses>
+      <license>
+        <name>MIT</name>
+        <url>https://github.com/yukihirai0505/sInstagram/blob/master/LICENSE.txt</url>
+        <distribution>repo</distribution>
+      </license>
+    </licenses>
+    <scm>
+      <url>https://github.com/yukihirai0505/sInstagram.git</url>
+      <connection>scm:git:https://github.com/yukihirai0505/sInstagram.git</connection>
+    </scm>
+    <developers>
+      <developer>
+        <id>yukihirai0505</id>
+        <name>Yuki Hirai</name>
+        <url>https://blog.yukihirai0505.com/</url>
+      </developer>
+    </developers>
