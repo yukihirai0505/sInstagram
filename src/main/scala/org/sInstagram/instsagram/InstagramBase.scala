@@ -17,7 +17,7 @@ import org.sInstagram.responses.relationships.RelationshipFeed
 import org.sInstagram.responses.tags.{TagInfoFeed, TagSearchFeed}
 import org.sInstagram.responses.users.basicinfo.UserInfo
 import org.sInstagram.responses.users.feed.UserFeed
-import org.sInstagram.utils.{PaginationHelper, Preconditions}
+import org.sInstagram.utils.PaginationHelper
 import play.api.libs.json.Reads
 
 import scala.language.postfixOps
@@ -27,7 +27,6 @@ import scala.language.postfixOps
   * author Yuki Hirai on 2016/11/09.
   */
 class InstagramBase(accessToken: String) extends InstagramClient {
-  protected val USER_ID_CANNOT_BE_NULL_OR_EMPTY: String = "UserId cannot be null or empty."
 
   protected def addSecureSigIfNeeded(auth: Auth, url: String, postData: Option[Map[String,String]] = None)
   : String = auth match {
@@ -55,7 +54,6 @@ class InstagramBase(accessToken: String) extends InstagramClient {
   }
 
   override def getUserInfo(userId: String): Future[Response[UserInfo]] = {
-    Preconditions.checkEmptyString(userId, USER_ID_CANNOT_BE_NULL_OR_EMPTY)
     val apiPath: String = Methods.USERS_WITH_ID format userId
     request[UserInfo](Verbs.GET, apiPath)
   }
@@ -74,7 +72,6 @@ class InstagramBase(accessToken: String) extends InstagramClient {
   }
 
   override def getRecentMediaFeed(userId: String, count: Option[Int] = None, minId: Option[String] = None, maxId: Option[String] = None): Future[Response[MediaFeed]] = {
-    Preconditions.checkEmptyString(userId, USER_ID_CANNOT_BE_NULL_OR_EMPTY)
     val params: Map[String, String] = Map(
       QueryParam.COUNT -> count.mkString,
       QueryParam.MIN_ID -> minId.mkString,
@@ -93,7 +90,6 @@ class InstagramBase(accessToken: String) extends InstagramClient {
   }
 
   override def getUserFollowListNextPage(userId: String, cursor: Option[String] = None): Future[Response[UserFeed]] = {
-    Preconditions.checkEmptyString(userId, USER_ID_CANNOT_BE_NULL_OR_EMPTY)
     val params: Map[String, String] = Map(
       QueryParam.CURSOR -> cursor.mkString
     )
