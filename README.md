@@ -2,7 +2,15 @@
 
 ## Installation
 
-submitting maven now
+### sbt
+
+Add the sInstagram dependency:
+
+```
+libraryDependencies += "com.yukihirai0505" % "sinstagram_2.11" % "0.0.1"
+```
+
+http://search.maven.org/#artifactdetails%7Ccom.yukihirai0505%7Csinstagram_2.11%7C0.0.1%7Cjar
 
 ## Documentation
 
