@@ -38,14 +38,6 @@ trait InstagramClient {
   def getCurrentUserInfo: Future[Response[UserInfo]]
 
   /**
-    * Get current user's recent media
-    *
-    * @return a MediaFeedObject
-    * @author tolstovdmit
-    */
-  def getUserRecentMedia(count: Option[Int], minId: Option[String], maxId: Option[String]): Future[Response[MediaFeed]]
-
-  /**
     * Get the most recent media published by a user.
     *
     * @param userId
@@ -55,7 +47,7 @@ trait InstagramClient {
     * @return the mediaFeed object
     * if any error occurs
     */
-  def getRecentMediaFeed(userId: String, count: Option[Int], minId: Option[String], maxId: Option[String]): Future[Response[MediaFeed]]
+  def getRecentMediaFeed(userId: Option[String], count: Option[Int], minId: Option[String], maxId: Option[String]): Future[Response[MediaFeed]]
 
   /**
     * Get the next page of recent media objects from a previously executed

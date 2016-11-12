@@ -63,22 +63,16 @@ class InstagramBase(accessToken: String) extends InstagramClient {
     request[UserInfo](Verbs.GET, Methods.USERS_SELF)
   }
 
-  override def getUserRecentMedia(count: Option[Int] = None, minId: Option[String] = None, maxId: Option[String] = None): Future[Response[MediaFeed]] = {
+  override def getRecentMediaFeed(userId: Option[String] = None, count: Option[Int] = None, minId: Option[String] = None, maxId: Option[String] = None): Future[Response[MediaFeed]] = {
     val params: Map[String, String] = Map(
       QueryParam.COUNT -> count.mkString,
       QueryParam.MIN_ID -> minId.mkString,
       QueryParam.MAX_ID -> maxId.mkString
     )
-    request[MediaFeed](Verbs.GET, Methods.USERS_SELF_RECENT_MEDIA, Option(params))
-  }
-
-  override def getRecentMediaFeed(userId: String, count: Option[Int] = None, minId: Option[String] = None, maxId: Option[String] = None): Future[Response[MediaFeed]] = {
-    val params: Map[String, String] = Map(
-      QueryParam.COUNT -> count.mkString,
-      QueryParam.MIN_ID -> minId.mkString,
-      QueryParam.MAX_ID -> maxId.mkString
-    )
-    val apiPath: String = Methods.USERS_RECENT_MEDIA format userId
+    val apiPath: String = userId match {
+      case Some(id) => Methods.USERS_RECENT_MEDIA format id
+      case None => Methods.USERS_SELF_RECENT_MEDIA
+    }
     request[MediaFeed](Verbs.GET, apiPath, Option(params))
   }
 
