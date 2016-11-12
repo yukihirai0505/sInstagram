@@ -2,7 +2,7 @@
 
 A Scala library for the Instagram API.
 An asynchronous non-blocking Scala Instagram API Wrapper,
-implemented using play-json and slf4j-nop.
+implemented using play-json.
 
 ## Prerequisites
 
