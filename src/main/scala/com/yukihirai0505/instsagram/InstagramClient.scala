@@ -103,7 +103,7 @@ trait InstagramClient {
     *
     * @param pagination
     */
-  def getUserFollowListNextPageByPage(pagination: Option[Pagination]): Future[Response[UserFeed]]
+  def getUserFollowListNextPageByPage(pagination: Pagination): Future[Response[UserFeed]]
 
   /**
     * Get the next page for list of 'users' the authenticated is followed by.

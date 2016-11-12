@@ -1,7 +1,8 @@
 package com.yukihirai0505.utils
 
-import java.net.{MalformedURLException, URL, URLDecoder}
+import java.net.{MalformedURLException, URLDecoder}
 
+import com.netaporter.uri.Uri
 import com.yukihirai0505.exceptions.OAuthException
 import com.yukihirai0505.responses.common.Pagination
 
@@ -13,7 +14,7 @@ object PaginationHelper {
     if (pagination.nextUrl.isDefined) {
       try {
         val nextUrl: String = decodeUrl(pagination.nextUrl.getOrElse(""))
-        val params: Map[String, String] = toQueryMap(nextUrl)
+        val params: Map[String, Option[String]] = Uri.parse(nextUrl).query.params.toMap
         val apiPath: String = substringBetween(nextUrl, apiUrl, "?")
         return new PaginationHelper.Page(apiPath, params)
       } catch {
@@ -23,28 +24,8 @@ object PaginationHelper {
     throw new OAuthException("No nextUrl")
   }
 
-  class Page(val apiPath: String, val queryStringParams: Map[String, String])
+  class Page(val apiPath: String, val queryStringParams: Map[String, Option[String]])
 
-  def toQueryMap(url: String): Map[String, String] = {
-    val query = try {
-      Option(new URL(url).getQuery).getOrElse("")
-    } catch {
-      case e: Throwable => ""
-    }
-    queryStringMap(query)
-  }
-
-  private def queryStringMap(query: String) = {
-    val parts = query.split("&")
-    parts.filter(_.nonEmpty).map {
-      p =>
-        val q = p.split("=")
-        q.length match {
-          case 2 => decodeUrl(q(0)) -> decodeUrl(q(1))
-          case 1 => decodeUrl(q(0)) -> ""
-        }
-    }.toMap
-  }
   private def decodeUrl(s: String): String = {
     URLDecoder.decode(s, "UTF-8")
   }

@@ -134,7 +134,7 @@ class Authentication {
   }
 
   private def ningHeadersToMap(headers: FluentCaseInsensitiveStringsMap) = {
-    mapAsScalaMapConverter(headers).asScala.map(e => e._1 -> e._2.asScala.toSeq).toMap
+    mapAsScalaMapConverter(headers).asScala.map(e => e._1 -> e._2.asScala).toMap
   }
 
 }
