@@ -42,7 +42,10 @@ val accessToken = accessTokenFuture onComplete {
 }
 
 // Making an authenticated call
-val instagram: Instagram = new Instagram("an-access-token")
+val auth: Auth = AccessToken("an-access-token")
+// If you want to use signed access token
+// val auth: Auth = SignedAccessToken("an-access-token", clientSecret)
+val instagram: Instagram = new Instagram(auth)
 // The library is asynchronous by default and returns a promise.
 val future = instagram.getUserRecentMedia()
 import scala.language.postfixOps

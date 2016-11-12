@@ -7,7 +7,7 @@ import com.yukihirai0505.Authentication
 import dispatch._
 import com.yukihirai0505.http.{Request, Response, Verbs}
 import com.yukihirai0505.model._
-import com.yukihirai0505.responses.auth.{Auth, SignedAccessToken}
+import com.yukihirai0505.responses.auth.{AccessToken, Auth, SignedAccessToken}
 import com.yukihirai0505.responses.comments.{MediaCommentResponse, MediaCommentsFeed}
 import com.yukihirai0505.responses.common.Pagination
 import com.yukihirai0505.responses.likes.LikesFeed
@@ -26,9 +26,20 @@ import scala.language.postfixOps
 /**
   * author Yuki Hirai on 2016/11/09.
   */
-class InstagramBase(accessToken: String) extends InstagramClient {
+class InstagramBase(auth: Auth) extends InstagramClient {
 
-  protected def addSecureSigIfNeeded(auth: Auth, url: String, postData: Option[Map[String,String]] = None)
+  /**
+    * Transform an Authentication type to be used in a URL.
+    *
+    * @param a Authentication
+    * @return  String
+    */
+  protected def authToGETParams(a: Auth): String = a match {
+    case AccessToken(token) => s"${OAuthConstants.ACCESS_TOKEN}=$token"
+    case SignedAccessToken(token, _) => s"${OAuthConstants.ACCESS_TOKEN}=$token"
+  }
+
+  protected def addSecureSigIfNeeded(url: String, postData: Option[Map[String,String]] = None)
   : String = auth match {
     case SignedAccessToken(_, secret) =>
       val uri = parse(url)
@@ -50,12 +61,16 @@ class InstagramBase(accessToken: String) extends InstagramClient {
   }
 
   def request[T](verb: Verbs, apiPath: String, params: Option[Map[String, Option[String]]] = None)(implicit r: Reads[T]): Future[Response[T]] = {
-    val effectiveUrl = s"${Constants.API_URL}$apiPath?${OAuthConstants.ACCESS_TOKEN}=$accessToken"
     val parameters: Map[String, String] = params match {
       case Some(m) => m.filter(_._2.isDefined).mapValues(_.getOrElse("")).filter(!_._2.isEmpty)
       case None => Map.empty
     }
-    val request = url(effectiveUrl).setMethod(verb.label)
+    val accessTokenUrl = s"${Constants.API_URL}$apiPath?${authToGETParams(auth)}"
+    val effectiveUrl: String = verb match {
+      case Verbs.GET => addSecureSigIfNeeded(accessTokenUrl)
+      case _ => addSecureSigIfNeeded(accessTokenUrl, Some(parameters))
+    }
+    val request: Req = url(effectiveUrl).setMethod(verb.label)
     val requestWithParams = if (verb.label == Verbs.GET.label) { request <<? parameters } else { request << parameters }
     println(requestWithParams.url)
     Request.send[T](requestWithParams)

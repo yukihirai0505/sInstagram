@@ -22,7 +22,7 @@ object Request {
       val response = resp.getResponseBody
       val headers = ningHeadersToMap(resp.getHeaders)
       if (resp.getStatusCode != 200) throw new Exception(parseMeta(response).toString)
-      println(Json.prettyPrint(Json.parse(response)))
+      // println(Json.prettyPrint(Json.parse(response)))
       val body = Json.parse(response).validate[T] match {
         case JsError(e) => throw new Exception(e.toString())
         case JsSuccess(value, _) => value match {
