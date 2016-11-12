@@ -7,10 +7,10 @@
 Add the sInstagram dependency:
 
 ```scala
-libraryDependencies += "com.yukihirai0505" % "sinstagram_2.11" % "0.0.1"
+libraryDependencies += "com.yukihirai0505" % "sinstagram_2.11" % "0.0.2"
 ```
 
-http://search.maven.org/#artifactdetails%7Ccom.yukihirai0505%7Csinstagram_2.11%7C0.0.1%7Cjar
+http://search.maven.org/#artifactdetails%7Ccom.yukihirai0505%7Csinstagram_2.11%7C0.0.2%7Cjar
 
 ## Documentation
 
@@ -19,6 +19,7 @@ http://search.maven.org/#artifactdetails%7Ccom.yukihirai0505%7Csinstagram_2.11%7
 ```scala
 import com.yukihirai0505.http.Response
 import com.yukihirai0505.model.{ResponseType, Scope}
+import com.yukihirai0505.responses.auth.Auth
 import com.yukihirai0505.{Authentication, Instagram}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -32,7 +33,7 @@ val scopes: Seq[Scope] = Seq(Scope.BASIC) // other: Scope.FOLLOWER_LIST, Scope.P
 
 // Server-Side login
 // Step 1: Get a URL to call. This URL will return the CODE to use in step 2
-val codeUrl = authentication.authURL(clientId, callbackUrl, ResponseType.CODE, scopes)
+val authUrl = authentication.authURL(clientId, callbackUrl, ResponseType.CODE, scopes)
 
 // Step 2: Use the code to get an AccessToken
 val accessTokenFuture = authentication.requestToken(clientId, clientSecret, callbackUrl, "the-code-from-step-1")
@@ -47,7 +48,7 @@ val auth: Auth = AccessToken("an-access-token")
 // val auth: Auth = SignedAccessToken("an-access-token", clientSecret)
 val instagram: Instagram = new Instagram(auth)
 // The library is asynchronous by default and returns a promise.
-val future = instagram.getUserRecentMedia()
+val future = instagram.getRecentMediaFeed()
 import scala.language.postfixOps
 future onComplete {
   case Success(Response(body, statusCode, headers)) =>
