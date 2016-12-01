@@ -28,7 +28,7 @@ Also, you need to include the library as your dependency:
 libraryDependencies += "com.yukihirai0505" % "sinstagram_2.11" % "0.0.2"
 ```
 
-http://search.maven.org/#artifactdetails%7Ccom.yukihirai0505%7Csinstagram_2.11%7C0.0.2%7Cjar
+http://mvnrepository.com/artifact/com.yukihirai0505/sinstagram_2.11/0.0.2
 
 ## Usage
 
