@@ -13,4 +13,5 @@ object OAuthConstants {
   val REDIRECT_URI: String = "redirect_uri"
   val SCOPE: String = "scope"
   val GRANT_TYPE: String = "grant_type"
+  val AUTHORIZATION_CODE: String = "authorization_code"
 }

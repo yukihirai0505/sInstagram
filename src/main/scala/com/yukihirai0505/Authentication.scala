@@ -111,7 +111,7 @@ class Authentication {
       OAuthConstants.CLIENT_SECRET -> clientSecret,
       OAuthConstants.REDIRECT_URI -> redirectURI,
       OAuthConstants.CODE -> code,
-      OAuthConstants.GRANT_TYPE -> OAuthConstants.GRANT_TYPE
+      OAuthConstants.GRANT_TYPE -> OAuthConstants.AUTHORIZATION_CODE
     )
     val request = url(Constants.ACCESS_TOKEN_ENDPOINT) << params
     Http(request).map { resp =>
