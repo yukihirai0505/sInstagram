@@ -4,7 +4,7 @@ sonatypeSettings
 
 name := "sInstagram"
 
-version := "0.0.2"
+version := "0.0.3"
 
 scalaVersion := "2.11.8"
 
@@ -41,7 +41,7 @@ organizationName := "com.yukihirai0505"
 
 profileName := "com.yukihirai0505"
 
-organizationHomepage := Some(url("https://blog.yukihirai0505.com/"))
+organizationHomepage := Some(url("https://yukihirai0505.github.io"))
 
 description := "A Scala library for the Instagram API"
 
