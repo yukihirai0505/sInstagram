@@ -25,10 +25,10 @@ resolvers += Resolver.sonatypeRepo("releases")
 Also, you need to include the library as your dependency:
 
 ```scala
-libraryDependencies += "com.yukihirai0505" % "sinstagram_2.11" % "0.0.3"
+libraryDependencies += "com.yukihirai0505" % "sinstagram_2.11" % "0.0.4"
 ```
 
-http://mvnrepository.com/artifact/com.yukihirai0505/sinstagram_2.11/0.0.3
+http://mvnrepository.com/artifact/com.yukihirai0505/sinstagram_2.11/0.0.4
 
 ## Usage
 
