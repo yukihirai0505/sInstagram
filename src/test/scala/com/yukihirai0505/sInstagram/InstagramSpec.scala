@@ -1,6 +1,7 @@
 package com.yukihirai0505.sInstagram
 
 import com.yukihirai0505.sInstagram.responses.auth.AccessToken
+import com.yukihirai0505.sInstagram.responses.media.MediaFeed
 import com.yukihirai0505.sInstagram.responses.users.basicinfo.UserInfo
 import org.scalatest.matchers.{BePropertyMatchResult, BePropertyMatcher}
 import org.scalatest.{FlatSpec, Matchers}
@@ -47,10 +48,14 @@ class InstagramSpec extends FlatSpec with Matchers {
     an[Exception] should be thrownBy Await.result(new Instagram(wrongToken).getUserInfo(instagramTestUserId), 10 seconds)
   }
 
-  "userInfo" should "return a Some[UserInfo]" in {
+  "getCurrentUserInfo" should "return a Some[UserInfo]" in {
     val request = Await.result(instagram.getCurrentUserInfo, 10 seconds)
     request should be(anInstanceOf[Some[UserInfo]])
     request.get.data.id.get should be(instagramTestUserId)
   }
 
+  "getRecentMediaFeed" should "return a Some[MediaFeed]" in {
+    val request = Await.result(instagram.getRecentMediaFeed(), 10 seconds)
+    request should be(anInstanceOf[Some[MediaFeed]])
+  }
 }
