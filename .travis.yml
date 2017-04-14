@@ -10,8 +10,11 @@ cache:
     - $HOME/.ivy2/cache
     - $HOME/.sbt/boot
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION clean coverage compile test coverageReport
+  - sbt ++$TRAVIS_SCALA_VERSION clean coverage compile test coverageReport &&
+    sbt ++$TRAVIS_SCALA_VERSION coverageAggregate
   - find $HOME/.sbt -name "*.lock" | xargs rm
   - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
+after_success:
+  - sbt ++$TRAVIS_SCALA_VERSION coveralls
 notifications:
   email: false
