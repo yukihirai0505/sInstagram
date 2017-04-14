@@ -1,4 +1,4 @@
-# sInstagram [![Build Status](https://img.shields.io/travis/yukihirai0505/sInstagram.svg)](https://travis-ci.org/yukihirai0505/sInstagram)
+# sInstagram [![Build Status](https://img.shields.io/travis/yukihirai0505/sInstagram.svg)](https://travis-ci.org/yukihirai0505/sInstagram) [![Maven Central](https://img.shields.io/maven-central/v/com.yukihirai0505/sinstagram_2.11.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.yukihirai0505%22%20AND%20a%3A%22sinstagram_2.11%22)
 
 A Scala library for the Instagram API.
 An asynchronous non-blocking Scala Instagram API Wrapper,
