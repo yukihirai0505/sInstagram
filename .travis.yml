@@ -8,6 +8,7 @@ cache:
     - $HOME/.sbt/boot
 script:
   - sbt ++$TRAVIS_SCALA_VERSION compile
+  - sbt coverageReport
   - find $HOME/.sbt -name "*.lock" | xargs rm
   - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
 notifications:
