@@ -6,7 +6,6 @@ import play.api.libs.json.Reads
 
 import com.netaporter.uri.Uri._
 import com.yukihirai0505.sInstagram.http.{Request, Verbs}
-import com.yukihirai0505.sInstagram.instagram.InstagramClient
 import com.yukihirai0505.sInstagram.model.{Constants, Methods, OAuthConstants, QueryParam, Relationship}
 import com.yukihirai0505.sInstagram.responses.auth.{AccessToken, Auth, SignedAccessToken}
 import com.yukihirai0505.sInstagram.responses.comments.{MediaCommentResponse, MediaCommentsFeed}
@@ -27,7 +26,7 @@ import scala.language.postfixOps
 /**
   * author Yuki Hirai on 2016/11/09.
   */
-class Instagram(auth: Auth) extends InstagramClient {
+class Instagram(auth: Auth) {
 
   /**
     * Transform an Authentication type to be used in a URL.
@@ -40,6 +39,12 @@ class Instagram(auth: Auth) extends InstagramClient {
     case SignedAccessToken(token, _) => s"${OAuthConstants.ACCESS_TOKEN}=$token"
   }
 
+  /***
+    * Add sign for secure request
+    * @param url
+    * @param postData
+    * @return
+    */
   protected def addSecureSigIfNeeded(url: String, postData: Option[Map[String,String]] = None)
   : String = auth match {
     case SignedAccessToken(_, secret) =>
@@ -55,12 +60,28 @@ class Instagram(auth: Auth) extends InstagramClient {
     case _ => url
   }
 
+  /***
+    * concat map option
+    * @param postData
+    * @param params
+    * @return
+    */
   protected def concatMapOpt(postData: Option[Map[String,String]], params: Map[String,Option[String]])
   : Map[String,Option[String]] = postData match {
     case Some(m) => params ++ m.mapValues(Some(_))
     case _ => params
   }
 
+  /***
+    * Request instagram api method
+    *
+    * @param verb
+    * @param apiPath
+    * @param params
+    * @param r
+    * @tparam T
+    * @return
+    */
   def request[T](verb: Verbs, apiPath: String, params: Option[Map[String, Option[String]]] = None)(implicit r: Reads[T]): Future[Option[T]] = {
     val parameters: Map[String, String] = params match {
       case Some(m) => m.filter(_._2.isDefined).mapValues(_.getOrElse("")).filter(!_._2.isEmpty)
@@ -77,16 +98,40 @@ class Instagram(auth: Auth) extends InstagramClient {
     Request.send[T](requestWithParams)
   }
 
-  override def getUserInfo(userId: String): Future[Option[UserInfo]] = {
+  /**
+    * Get basic information about a user.
+    *
+    * @param userId
+    * user-id
+    * @return a MediaFeed object.
+    * if any error occurs.
+    */
+  def getUserInfo(userId: String): Future[Option[UserInfo]] = {
     val apiPath: String = Methods.USERS_WITH_ID format userId
     request[UserInfo](Verbs.GET, apiPath)
   }
 
-  override def getCurrentUserInfo: Future[Option[UserInfo]] = {
+  /**
+    * Get basic information about a user.
+    *
+    * @return a UserInfo object.
+    * if any error occurs.
+    */
+  def getCurrentUserInfo: Future[Option[UserInfo]] = {
     request[UserInfo](Verbs.GET, Methods.USERS_SELF)
   }
 
-  override def getRecentMediaFeed(userId: Option[String] = None, count: Option[Int] = None, minId: Option[String] = None, maxId: Option[String] = None): Future[Option[MediaFeed]] = {
+  /**
+    * Get the most recent media published by a user.
+    *
+    * @param userId
+    * @param count
+    * @param minId
+    * @param maxId
+    * @return the mediaFeed object
+    * if any error occurs
+    */
+  def getRecentMediaFeed(userId: Option[String] = None, count: Option[Int] = None, minId: Option[String] = None, maxId: Option[String] = None): Future[Option[MediaFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.COUNT -> Option(count.mkString),
       QueryParam.MIN_ID -> Option(minId.mkString),
@@ -99,16 +144,36 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[MediaFeed](Verbs.GET, apiPath, Some(params))
   }
 
-  override def getMediaComments(mediaId: String): Future[Option[MediaCommentsFeed]] = {
+  /**
+    * Get a full list of comments on a media.
+    *
+    * @param mediaId
+    * a mediaId
+    * @return a MediaCommentsFeed object.
+    * if any error occurs.
+    */
+  def getMediaComments(mediaId: String): Future[Option[MediaCommentsFeed]] = {
     val apiPath: String = Methods.MEDIA_COMMENTS format mediaId
     request[MediaCommentsFeed](Verbs.GET, apiPath)
   }
 
-  override def getUserFollowList(userId: String): Future[Option[UserFeed]] = {
+  /**
+    * Get the list of 'users' the authenticated user follows.
+    *
+    * @param userId
+    * userId of the User.
+    * @return a UserFeed object.
+    * if any error occurs.
+    */
+  def getUserFollowList(userId: String): Future[Option[UserFeed]] = {
     getUserFollowListNextPage(userId)
   }
 
-  override def getUserFollowListNextPage(userId: String, cursor: Option[String] = None): Future[Option[UserFeed]] = {
+  /**
+    * Get the next page for list of 'users' the authenticated user follows.
+    *
+    */
+  def getUserFollowListNextPage(userId: String, cursor: Option[String] = None): Future[Option[UserFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.CURSOR -> Option(cursor.mkString)
     )
@@ -116,11 +181,22 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[UserFeed](Verbs.GET, apiPath, Some(params))
   }
 
-  override def getUserFollowListNextPageByPage(pagination: Pagination): Future[Option[UserFeed]] = {
+  /**
+    * Get the next page for list of 'users' the authenticated user follows.
+    *
+    * @param pagination
+    */
+  def getUserFollowListNextPageByPage(pagination: Pagination): Future[Option[UserFeed]] = {
     getUserFeedInfoNextPage(pagination)
   }
 
-  override def getUserLikedMediaFeed(maxLikeId: Option[Long] = None, count: Option[Int] = None): Future[Option[MediaFeed]] = {
+  /**
+    * Get the authenticated user's list of media they've liked.
+    *
+    * @return a MediaFeed object.
+    * if any error occurs.
+    */
+  def getUserLikedMediaFeed(maxLikeId: Option[Long] = None, count: Option[Int] = None): Future[Option[MediaFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.MAX_LIKE_ID -> Option(maxLikeId.mkString),
       QueryParam.COUNT -> Option(count.mkString)
@@ -128,7 +204,15 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[MediaFeed](Verbs.GET, Methods.USERS_SELF_LIKED_MEDIA, Some(params))
   }
 
-  override def searchUser(query: String, count: Option[Int] = None): Future[Option[UserFeed]] = {
+  /**
+    * Search for a user by name.
+    *
+    * @param query
+    * A query string.
+    * @return a UserFeed object.
+    * if any error occurs.
+    */
+  def searchUser(query: String, count: Option[Int] = None): Future[Option[UserFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.SEARCH_QUERY -> Some(query),
       QueryParam.COUNT -> Option(count.mkString)
@@ -136,17 +220,45 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[UserFeed](Verbs.GET, Methods.USERS_SEARCH, Some(params))
   }
 
-  override def getLocationInfo(locationId: String): Future[Option[LocationInfo]] = {
+  /**
+    * Get information about a location.
+    *
+    * @param locationId
+    * an id of the Location
+    * @return a LocationInfo object.
+    * if any error occurs.
+    */
+  def getLocationInfo(locationId: String): Future[Option[LocationInfo]] = {
     val apiPath: String = Methods.LOCATIONS_BY_ID format locationId
     request[LocationInfo](Verbs.GET, apiPath)
   }
 
-  override def getTagInfo(tagName: String): Future[Option[TagInfoFeed]] = {
+  /**
+    * Get information about a tag object.
+    *
+    * @param tagName
+    * name of the tag.
+    * @return a TagInfoFeed object.
+    * if any error occurs.
+    */
+  def getTagInfo(tagName: String): Future[Option[TagInfoFeed]] = {
     val apiPath: String = Methods.TAGS_BY_NAME format URLEncoder.encode(tagName, "UTF-8")
     request[TagInfoFeed](Verbs.GET, apiPath)
   }
 
-  override def searchLocation(latitude: Double, longitude: Double, distance: Option[Int] = None): Future[Option[LocationSearchFeed]] = {
+  /**
+    * Search for a location by geographic coordinate.
+    *
+    * @param latitude
+    * Latitude of the center search coordinate.
+    * @param longitude
+    * Longitude of the center search coordinate.
+    * @param distance
+    * Default is 1000m (distance=1000), max distance is 5000.
+    * @return a LocationSearchFeed object.
+    * if any error occurs.
+    */
+  def searchLocation(latitude: Double, longitude: Double, distance: Option[Int] = None): Future[Option[LocationSearchFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.LATITUDE -> Some(latitude.toString),
       QueryParam.LONGITUDE -> Some(longitude.toString),
@@ -155,7 +267,19 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[LocationSearchFeed](Verbs.GET, Methods.LOCATIONS_SEARCH, Some(params))
   }
 
-  override def getRecentMediaByLocation(locationId: String, minId: Option[String] = None, maxId: Option[String] = None): Future[Option[MediaFeed]] = {
+  /**
+    * Get a list of recent media objects from a given location.
+    *
+    * @param locationId
+    * a id of the Media.
+    * @param minId
+    * Return media before this min_id. May be null.
+    * @param maxId
+    * Return media before this max_id. May be null.
+    * @return a MediaFeed object.
+    * if any error occurs.
+    */
+  def getRecentMediaByLocation(locationId: String, minId: Option[String] = None, maxId: Option[String] = None): Future[Option[MediaFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.MIN_ID -> Option(minId.mkString),
       QueryParam.MAX_ID -> Option(maxId.mkString)
@@ -164,37 +288,89 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[MediaFeed](Verbs.GET, apiMethod, Some(params))
   }
 
-  override def setUserLike(mediaId: String): Future[Option[LikesFeed]] = {
+  /**
+    * Set a like on this media by the currently authenticated user.
+    *
+    * @param mediaId
+    * a mediaId of the Media
+    * @return a LikesFeed object.
+    * if any error occurs.
+    */
+  def setUserLike(mediaId: String): Future[Option[LikesFeed]] = {
     val apiMethod: String = Methods.LIKES_BY_MEDIA_ID format mediaId
     request[LikesFeed](Verbs.POST, apiMethod)
   }
 
-  override def getMediaInfo(mediaId: String): Future[Option[MediaInfoFeed]] = {
+  /**
+    * Get information about a media object.
+    *
+    * @param mediaId
+    * mediaId of the Media object.
+    * @return a mediaFeed object.
+    * if any error occurs.
+    */
+  def getMediaInfo(mediaId: String): Future[Option[MediaInfoFeed]] = {
     val apiPath = Methods.MEDIA_BY_ID format mediaId
     request[MediaInfoFeed](Verbs.GET, apiPath)
   }
 
-  override def getRecentMediaNextPage(pagination: Pagination): Future[Option[MediaFeed]] = {
+  /**
+    * Get the next page of recent media objects from a previously executed
+    * request
+    *
+    * @param pagination
+    */
+  def getRecentMediaNextPage(pagination: Pagination): Future[Option[MediaFeed]] = {
     val page: PaginationHelper.Page = PaginationHelper.parseNextUrl(pagination, Constants.API_URL)
     request[MediaFeed](Verbs.GET, page.apiPath, Some(page.queryStringParams))
   }
 
-  override def getUserFeedInfoNextPage(pagination: Pagination): Future[Option[UserFeed]] = {
+  /**
+    * Get the next page of user feed objects from a previously executed request
+    *
+    * @param pagination
+    */
+  def getUserFeedInfoNextPage(pagination: Pagination): Future[Option[UserFeed]] = {
     val page: PaginationHelper.Page = PaginationHelper.parseNextUrl(pagination, Constants.API_URL)
     request[UserFeed](Verbs.GET, page.apiPath, Option(page.queryStringParams))
   }
 
-  override def deleteUserLike(mediaId: String): Future[Option[LikesFeed]] = {
+  /**
+    * Remove a like on this media by the currently authenticated user.
+    *
+    * @param mediaId
+    * a mediaId of the Media
+    * @return a LikesFeed object.
+    * if any error occurs.
+    */
+  def deleteUserLike(mediaId: String): Future[Option[LikesFeed]] = {
     val apiPath: String = Methods.LIKES_BY_MEDIA_ID format mediaId
     request[LikesFeed](Verbs.DELETE, apiPath)
   }
 
-  override def deleteMediaCommentById(mediaId: String, commentId: String): Future[Option[MediaCommentResponse]] = {
+  /**
+    * Remove a comment either on the authenticated user's media or authored by
+    * the authenticated user.
+    *
+    * @param mediaId
+    * a mediaId of the Media
+    * @param commentId
+    * a commentId of the Comment
+    * @return a MediaCommentResponse feed.
+    * if any error occurs.
+    */
+  def deleteMediaCommentById(mediaId: String, commentId: String): Future[Option[MediaCommentResponse]] = {
     val apiPath: String = Methods.DELETE_MEDIA_COMMENTS format (mediaId, commentId)
     request[MediaCommentResponse](Verbs.DELETE, apiPath)
   }
 
-  override def getUserFollowedByList(userId: String, cursor: Option[String] = None): Future[Option[UserFeed]] = {
+  /**
+    * Get the next page for list of 'users' the authenticated is followed by.
+    *
+    * @param userId
+    * @param cursor
+    */
+  def getUserFollowedByList(userId: String, cursor: Option[String] = None): Future[Option[UserFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.CURSOR -> Option(cursor.mkString)
     )
@@ -202,11 +378,27 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[UserFeed](Verbs.GET, apiPath, Some(params))
   }
 
-  override def getUserFollowedByListNextPage(pagination: Pagination): Future[Option[UserFeed]] = {
+  /**
+    * Get the next page for list of 'users' the authenticated is followed by.
+    *
+    * @param pagination
+    */
+  def getUserFollowedByListNextPage(pagination: Pagination): Future[Option[UserFeed]] = {
     getUserFeedInfoNextPage(pagination)
   }
 
-  override def setMediaComments(mediaId: String, text: String): Future[Option[MediaCommentResponse]] = {
+  /**
+    * Create a comment on a media.
+    *
+    * @param mediaId
+    * a mediaId
+    * @param text
+    * Text to post as a comment on the media as specified in
+    * media-id.
+    * @return a MediaCommentResponse feed.
+    * if any error occurs.
+    */
+  def setMediaComments(mediaId: String, text: String): Future[Option[MediaCommentResponse]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.TEXT -> Some(text)
     )
@@ -214,19 +406,51 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[MediaCommentResponse](Verbs.POST, apiPath, Some(params))
   }
 
-  override def getMediaInfoByShortCode(shortCode: String): Future[Option[MediaInfoFeed]] = {
+  /**
+    * Get information about a media object.
+    *
+    * @param shortCode
+    * shortcode of the Media object.
+    * @return a mediaFeed object.
+    * if any error occurs.
+    */
+  def getMediaInfoByShortCode(shortCode: String): Future[Option[MediaInfoFeed]] = {
     val apiPath: String = Methods.MEDIA_BY_SHORT_CODE format shortCode
     request[MediaInfoFeed](Verbs.GET, apiPath)
   }
 
-  override def searchTags(tagName: String): Future[Option[TagSearchFeed]] = {
+  /**
+    * Search for tags by name - results are ordered first as an exact match,
+    * then by popularity.
+    *
+    * @param tagName
+    * name of the tag
+    * @return a TagSearchFeed object.
+    * if any error occurs.
+    */
+  def searchTags(tagName: String): Future[Option[TagSearchFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.SEARCH_QUERY -> Some(tagName)
     )
     request[TagSearchFeed](Verbs.GET, Methods.TAGS_SEARCH, Some(params))
   }
 
-  override def getRecentMediaFeedTags(tagName: String, minTagId: Option[String] = None, maxTagId: Option[String] = None, count: Option[Long] = None): Future[Option[MediaFeed]] = {
+  /**
+    * Get a list of recently tagged media.
+    *
+    * @param tagName
+    *              name of the tag.
+    * @param minTagId
+    *              (return media before this tag_id), can be null
+    * @param maxTagId
+    *              (return media before this tag_id), can be null
+    * @param count ,
+    *              set to 0 to use default
+    * @return { @link MediaFeed}
+    *                 the media feed for the first page
+    * if any error occurs.
+    */
+  def getRecentMediaFeedTags(tagName: String, minTagId: Option[String] = None, maxTagId: Option[String] = None, count: Option[Long] = None): Future[Option[MediaFeed]] = {
     val apiPath: String = Methods.TAGS_RECENT_MEDIA format tagName
     val params: Map[String, Option[String]] = Map(
       QueryParam.MIN_TAG_ID -> Option(minTagId.mkString),
@@ -236,7 +460,17 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[MediaFeed](Verbs.GET, apiPath, Some(params))
   }
 
-  override def setUserRelationship(userId: String, relationship: Relationship): Future[Option[RelationshipFeed]] = {
+  /**
+    * Set the relationship between the current user and the target user
+    *
+    * @param userId
+    * userId of the user.
+    * @param relationship
+    * Relationship status
+    * @return a Relationship feed object
+    * if any error occurs.
+    */
+  def setUserRelationship(userId: String, relationship: Relationship): Future[Option[RelationshipFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.ACTION -> Some(relationship.value)
     )
@@ -244,23 +478,58 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[RelationshipFeed](Verbs.POST, apiPath, Some(params))
   }
 
-  override def getUserRequestedBy: Future[Option[UserFeed]] = {
+  /**
+    * Get a list of users who have requested this user's permission to follow
+    *
+    * @return a UserFeed object.
+    * if any error occurs.
+    */
+  def getUserRequestedBy: Future[Option[UserFeed]] = {
     request[UserFeed](Verbs.GET, Methods.USERS_SELF_REQUESTED_BY)
   }
 
-  override def getUserRelationship(userId: String): Future[Option[RelationshipFeed]] = {
+  /**
+    * Get information about the current user's relationship
+    * (follow/following/etc) to another user.
+    *
+    * @param userId
+    * userId of the User.
+    * @return a Relationship feed object.
+    * if any error occurs.
+    */
+  def getUserRelationship(userId: String): Future[Option[RelationshipFeed]] = {
     val apiPath: String = Methods.USERS_ID_RELATIONSHIP format userId
     request[RelationshipFeed](Verbs.GET, apiPath)
   }
 
-  override def searchFacebookPlace(facebookPlacesId: String): Future[Option[LocationSearchFeed]] = {
+  /**
+    * Search for a location by Facebook places id.
+    *
+    * @param facebookPlacesId
+    * Facebook places id of the location
+    * @return a LocationSearchFeed object.
+    * if any error occurs.
+    */
+  def searchFacebookPlace(facebookPlacesId: String): Future[Option[LocationSearchFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.FACEBOOK_PLACES_ID -> Some(facebookPlacesId)
     )
     request[LocationSearchFeed](Verbs.GET, Methods.LOCATIONS_SEARCH, Some(params))
   }
 
-  override def searchMedia(latitude: Double, longitude:Double, distance: Option[Int] = None): Future[Option[MediaFeed]] = {
+  /**
+    * Search for media in a given area.
+    *
+    * @param latitude
+    * Latitude of the center search coordinate.
+    * @param longitude
+    * Longitude of the center search coordinate.
+    * @param distance
+    * Default is 1km (distance=1000), max distance is 5km.
+    * @return a MediaFeed object.
+    * if any error occurs
+    */
+  def searchMedia(latitude: Double, longitude:Double, distance: Option[Int] = None): Future[Option[MediaFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.LATITUDE -> Some(latitude.toString),
       QueryParam.LONGITUDE -> Some(longitude.toString),
@@ -269,7 +538,15 @@ class Instagram(auth: Auth) extends InstagramClient {
     request[MediaFeed](Verbs.GET, Methods.MEDIA_SEARCH, Some(params))
   }
 
-  override def getUserLikes(mediaId: String): Future[Option[LikesFeed]] = {
+  /**
+    * Get a list of users who have liked this media.
+    *
+    * @param mediaId
+    * a mediaId of the Media
+    * @return a LikesFeed object.
+    * if any error occurs.
+    */
+  def getUserLikes(mediaId: String): Future[Option[LikesFeed]] = {
     val apiPath: String = Methods.LIKES_BY_MEDIA_ID format mediaId
     request[LikesFeed](Verbs.GET, apiPath)
   }
