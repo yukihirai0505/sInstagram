@@ -78,7 +78,7 @@ http://mvnrepository.com/artifact/com.yukihirai0505/sinstagram_2.11/0.0.4
 
 Please look at this file to see all available methods:
 
-https://github.com/yukihirai0505/sInstagram/blob/master/src/main/scala/com/yukihirai0505/instsagram/InstagramClient.scala
+https://github.com/yukihirai0505/sInstagram/blob/master/src/main/scala/com/yukihirai0505/sInstagram/Instagram.scala
 
 ## References
 
