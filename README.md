@@ -35,44 +35,45 @@ http://mvnrepository.com/artifact/com.yukihirai0505/sinstagram_2.11/0.0.3
 ### Examples
 
 ```scala
-import com.yukihirai0505.http.Response
-import com.yukihirai0505.model.{ResponseType, Scope}
-import com.yukihirai0505.responses.auth.Auth
-import com.yukihirai0505.{Authentication, Instagram}
+  import com.yukihirai0505.sInstagram.model.{ResponseType, Scope}
+  import com.yukihirai0505.sInstagram.responses.auth.{AccessToken, Auth}
+  import com.yukihirai0505.sInstagram.{Instagram, InstagramAuth}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{Failure, Success}
+  import scala.concurrent.ExecutionContext.Implicits.global
+  import scala.util.{Failure, Success}
 
-val clientId = "client-id"
-val clientSecret = "client-secret"
-val callbackUrl = "callback-URI"
-val authentication: Authentication = new Authentication
-val scopes: Seq[Scope] = Seq(Scope.BASIC) // other: Scope.FOLLOWER_LIST, Scope.PUBLIC_CONTENT, Scope.COMMENTS, Scope.LIKES, Scope.RELATIONSHIPS
+  val clientId = "client-id"
+  val clientSecret = "client-secret"
+  val callbackUrl = "callback-URI"
+  val authentication = new InstagramAuth
+  val scopes: Seq[Scope] = Seq(Scope.BASIC) // other: Scope.FOLLOWER_LIST, Scope.PUBLIC_CONTENT, Scope.COMMENTS, Scope.LIKES, Scope.RELATIONSHIPS
 
-// Server-Side login
-// Step 1: Get a URL to call. This URL will return the CODE to use in step 2
-val authUrl = authentication.authURL(clientId, callbackUrl, ResponseType.CODE, scopes)
+  // Server-Side login
+  // Step 1: Get a URL to call. This URL will return the CODE to use in step 2
+  val authUrl = authentication.authURL(clientId, callbackUrl, ResponseType.CODE, scopes)
 
-// Step 2: Use the code to get an AccessToken
-val accessTokenFuture = authentication.requestToken(clientId, clientSecret, callbackUrl, "the-code-from-step-1")
-val accessToken = accessTokenFuture onComplete {
-  case Success(Response(Some(token: AccessToken), _, _)) => token
-  case Failure(t) => println("An error has occured: " + t.getMessage)
-}
+  // Step 2: Use the code to get an AccessToken
+  val accessTokenFuture = authentication.requestToken(clientId, clientSecret, callbackUrl, "the-code-from-step-1")
+  val accessToken = accessTokenFuture onComplete {
+    case Success(Some(token: AccessToken)) => token
+    case Failure(t) => println("An error has occured: " + t.getMessage)
+  }
 
-// Making an authenticated call
-val auth: Auth = AccessToken("an-access-token")
-// If you want to use signed access token
-// val auth: Auth = SignedAccessToken("an-access-token", clientSecret)
-val instagram: Instagram = new Instagram(auth)
-// The library is asynchronous by default and returns a promise.
-val future = instagram.getRecentMediaFeed()
-import scala.language.postfixOps
-future onComplete {
-  case Success(Response(body, statusCode, headers)) =>
-    println(body.getOrElse())
-  case Failure(t) => println("An error has occured: " + t.getMessage)
-}
+  // Making an authenticated call
+  val auth: Auth = AccessToken("an-access-token")
+  // If you want to use signed access token
+  // val auth: Auth = SignedAccessToken("an-access-token", clientSecret)
+  val instagram: Instagram = new Instagram(auth)
+  // The library is asynchronous by default and returns a promise.
+  val future = instagram.getRecentMediaFeed()
+
+  import scala.language.postfixOps
+
+  future onComplete {
+    case Success(body) =>
+      body.fold()(b => b.data.foreach(println))
+    case Failure(t) => println("An error has occured: " + t.getMessage)
+  }
 ```
 
 Please look at this file to see all available methods:
