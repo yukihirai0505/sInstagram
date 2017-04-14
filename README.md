@@ -1,4 +1,4 @@
-# sInstagram
+# sInstagram [![Build Status](https://api.travis-ci.org/yukihirai0505/sInstagram.svg)](https://travis-ci.org/yukihirai0505/sInstagram)
 
 A Scala library for the Instagram API.
 An asynchronous non-blocking Scala Instagram API Wrapper,
