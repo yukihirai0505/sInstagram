@@ -1,8 +1,10 @@
 package com.yukihirai0505.sInstagram
 
 import com.yukihirai0505.sInstagram.responses.auth.AccessToken
+import com.yukihirai0505.sInstagram.responses.comments.MediaCommentsFeed
 import com.yukihirai0505.sInstagram.responses.media.MediaFeed
 import com.yukihirai0505.sInstagram.responses.users.basicinfo.UserInfo
+import com.yukihirai0505.sInstagram.responses.users.feed.UserFeed
 import org.scalatest.matchers.{BePropertyMatchResult, BePropertyMatcher}
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -58,4 +60,29 @@ class InstagramSpec extends FlatSpec with Matchers {
     val request = Await.result(instagram.getRecentMediaFeed(), 10 seconds)
     request should be(anInstanceOf[Some[MediaFeed]])
   }
+
+  // TODO
+  "getMediaComments" should "return a Some[MediaCommentsFeed]" in {
+    intercept[Exception] {
+      val request = Await.result(instagram.getMediaComments("12345"), 10 seconds)
+      request should be(anInstanceOf[Some[MediaCommentsFeed]])
+    }
+  }
+
+  // TODO
+  "getUserFollowList" should "return a Some[UserFeed]" in {
+    intercept[Exception] {
+      val request = Await.result(instagram.getUserFollowList(instagramTestUserId), 10 seconds)
+      request should be(anInstanceOf[Some[UserFeed]])
+    }
+  }
+
+  // TODO
+  "getUserFollowListNextPage" should "return a Some[UserFeed]" in {
+    intercept[Exception] {
+      val request = Await.result(instagram.getUserFollowListNextPage(instagramTestUserId), 10 seconds)
+      request should be(anInstanceOf[Some[UserFeed]])
+    }
+  }
+
 }
