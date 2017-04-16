@@ -45,6 +45,7 @@ class InstagramSpec extends FlatSpec with Matchers {
   val instagram = new Instagram(auth)
   val instagramTestUserId = "4856871817"
   val wrongToken = AccessToken("this is a bullshit access token")
+  var mediaId: Option[String] = None
 
   "A failed request" should "return a failed promise" in {
     an[Exception] should be thrownBy Await.result(new Instagram(wrongToken).getUserInfo(instagramTestUserId), 10 seconds)
@@ -58,31 +59,23 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getRecentMediaFeed" should "return a Some[MediaFeed]" in {
     val request = Await.result(instagram.getRecentMediaFeed(), 10 seconds)
+    mediaId = request.flatMap(_.data.headOption.flatMap(_.id))
     request should be(anInstanceOf[Some[MediaFeed]])
   }
 
-  // TODO
   "getMediaComments" should "return a Some[MediaCommentsFeed]" in {
-    intercept[Exception] {
-      val request = Await.result(instagram.getMediaComments("12345"), 10 seconds)
-      request should be(anInstanceOf[Some[MediaCommentsFeed]])
-    }
+    val request = Await.result(instagram.getMediaComments(mediaId.getOrElse("")), 10 seconds)
+    request should be(anInstanceOf[Some[MediaCommentsFeed]])
   }
 
-  // TODO
   "getUserFollowList" should "return a Some[UserFeed]" in {
-    intercept[Exception] {
-      val request = Await.result(instagram.getUserFollowList(instagramTestUserId), 10 seconds)
-      request should be(anInstanceOf[Some[UserFeed]])
-    }
+    val request = Await.result(instagram.getUserFollowList(instagramTestUserId), 10 seconds)
+    request should be(anInstanceOf[Some[UserFeed]])
   }
 
-  // TODO
   "getUserFollowListNextPage" should "return a Some[UserFeed]" in {
-    intercept[Exception] {
-      val request = Await.result(instagram.getUserFollowListNextPage(instagramTestUserId), 10 seconds)
-      request should be(anInstanceOf[Some[UserFeed]])
-    }
+    val request = Await.result(instagram.getUserFollowListNextPage(instagramTestUserId), 10 seconds)
+    request should be(anInstanceOf[Some[UserFeed]])
   }
 
 }
