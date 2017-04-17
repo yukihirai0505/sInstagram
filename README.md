@@ -25,14 +25,53 @@ resolvers += Resolver.sonatypeRepo("releases")
 Also, you need to include the library as your dependency:
 
 ```scala
-libraryDependencies += "com.yukihirai0505" % "sinstagram_2.11" % "0.0.4"
+libraryDependencies += "com.yukihirai0505" % "sinstagram_2.11" % "0.0.5"
 ```
 
-http://mvnrepository.com/artifact/com.yukihirai0505/sinstagram_2.11/0.0.4
+http://mvnrepository.com/artifact/com.yukihirai0505/sinstagram_2.11/0.0.5
 
 ## Usage
 
+### Config
+
+Add your client id and client secret as either environment variables or as part of your configuration.
+sInstagram will look for the following environment variables:
+
+```
+export INSTAGRAM_CLIENT_ID='my-instagram-client-id'
+export INSTAGRAM_SECRET='my-instagram-secret'
+export INSTAGRAM_CALLBACK_URL='my-instagram-callback-url'
+```
+
+You can also add them to your configuration file,
+usually called `application.conf`:
+
+```
+instagram {
+  client = {
+    id = "my-instagram-client-id"
+    secret = "my-instagram-secret"
+  }
+  callbackUrl = "my-instagram-callback-url"
+}
+```
+
+These configurations will be automatically loaded when creating a instagram client,
+so all you have to do is to initialize your clients as following:
+
+```scala
+import com.yukihirai0505.sInstagram.InstagramAuth
+import com.yukihirai0505.sInstagram.model.{ResponseType, Scope}
+
+val instagramAuth = new InstagramAuth
+val scopes: Seq[Scope] = Seq(Scope.BASIC)
+val authUrl = instagramAuth.authURL(scopes = scopes)
+val accessTokenFuture = instagramAuth.requestToken(code = "the-code-from-callback")
+```
+
 ### Examples
+
+Alternatively, you can also specify your tokens directly when creating the client:
 
 ```scala
   import com.yukihirai0505.sInstagram.model.{ResponseType, Scope}
@@ -45,15 +84,15 @@ http://mvnrepository.com/artifact/com.yukihirai0505/sinstagram_2.11/0.0.4
   val clientId = "client-id"
   val clientSecret = "client-secret"
   val callbackUrl = "callback-URI"
-  val authentication = new InstagramAuth
+  val instagramAuth = new InstagramAuth
   val scopes: Seq[Scope] = Seq(Scope.BASIC) // other: Scope.FOLLOWER_LIST, Scope.PUBLIC_CONTENT, Scope.COMMENTS, Scope.LIKES, Scope.RELATIONSHIPS
 
   // Server-Side login
   // Step 1: Get a URL to call. This URL will return the CODE to use in step 2
-  val authUrl = authentication.authURL(clientId, callbackUrl, ResponseType.CODE, scopes)
+  val authUrl = instagramAuth.authURL(clientId, callbackUrl, ResponseType.CODE, scopes)
 
   // Step 2: Use the code to get an AccessToken
-  val accessTokenFuture = authentication.requestToken(clientId, clientSecret, callbackUrl, "the-code-from-step-1")
+  val accessTokenFuture = instagramAuth.requestToken(clientId, clientSecret, callbackUrl, "the-code-from-step-1")
   val accessToken = accessTokenFuture onComplete {
     case Success(Some(token: AccessToken)) => token
     case Failure(t) => println("An error has occured: " + t.getMessage)

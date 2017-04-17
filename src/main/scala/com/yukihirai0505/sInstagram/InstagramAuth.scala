@@ -9,6 +9,7 @@ import com.ning.http.client.FluentCaseInsensitiveStringsMap
 import com.yukihirai0505.sInstagram.model.{Constants, OAuthConstants, ResponseType, Scope}
 import com.yukihirai0505.sInstagram.responses.auth.{AccessToken, Auth, Oauth, SignedAccessToken}
 import com.yukihirai0505.sInstagram.responses.common.Meta
+import com.yukihirai0505.sInstagram.utils.Configurations.{clientId, clientSecret, callbackUrl}
 import dispatch.Defaults._
 import dispatch._
 
@@ -47,7 +48,7 @@ class InstagramAuth {
    * @param responseType   Response type code or token
    * @param scopes         Require scope.
    */
-  def authURL(clientId: String, redirectURI: String, responseType: ResponseType, scopes: Seq[Scope] = Seq()): String = {
+  def authURL(clientId: String = clientId, redirectURI: String = callbackUrl, responseType: ResponseType = ResponseType.CODE, scopes: Seq[Scope] = Seq()): String = {
     ( Constants.AUTHORIZE_URL format (clientId, redirectURI, responseType.label) ) + s"&${setScopes(scopes)}"
   }
 
@@ -105,7 +106,7 @@ class InstagramAuth {
    * @param code         Authentication code. You can retrieve it via codeURL.
    * @return             Future of Response[Authentication]
    */
-  def requestToken(clientId: String, clientSecret: String, redirectURI: String, code: String): Future[Option[Auth]] = {
+  def requestToken(clientId: String= clientId, clientSecret: String = clientSecret, redirectURI: String = callbackUrl, code: String): Future[Option[Auth]] = {
     val params = Map(
       OAuthConstants.CLIENT_ID -> clientId,
       OAuthConstants.CLIENT_SECRET -> clientSecret,
