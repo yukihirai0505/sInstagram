@@ -4,7 +4,7 @@ sonatypeSettings
 
 name := "sInstagram"
 
-version := "0.0.5"
+version := "0.0.6"
 
 scalaVersion := "2.11.8"
 
