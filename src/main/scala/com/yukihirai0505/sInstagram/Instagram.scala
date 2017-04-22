@@ -3,13 +3,12 @@ package com.yukihirai0505.sInstagram
 import java.net.URLEncoder
 
 import play.api.libs.json.Reads
-
 import com.netaporter.uri.Uri._
 import com.yukihirai0505.sInstagram.http.{Request, Verbs}
 import com.yukihirai0505.sInstagram.model.{Constants, Methods, OAuthConstants, QueryParam, Relationship}
 import com.yukihirai0505.sInstagram.responses.auth.{AccessToken, Auth, SignedAccessToken}
-import com.yukihirai0505.sInstagram.responses.comments.{MediaCommentResponse, MediaCommentsFeed}
-import com.yukihirai0505.sInstagram.responses.common.Pagination
+import com.yukihirai0505.sInstagram.responses.comments.MediaCommentsFeed
+import com.yukihirai0505.sInstagram.responses.common.{NoDataResponse, Pagination}
 import com.yukihirai0505.sInstagram.responses.likes.LikesFeed
 import com.yukihirai0505.sInstagram.responses.locations.{LocationInfo, LocationSearchFeed}
 import com.yukihirai0505.sInstagram.responses.media.{MediaFeed, MediaInfoFeed}
@@ -145,19 +144,6 @@ class Instagram(auth: Auth) {
   }
 
   /**
-    * Get a full list of comments on a media.
-    *
-    * @param mediaId
-    * a mediaId
-    * @return a MediaCommentsFeed object.
-    * if any error occurs.
-    */
-  def getMediaComments(mediaId: String): Future[Option[MediaCommentsFeed]] = {
-    val apiPath: String = Methods.MEDIA_COMMENTS format mediaId
-    request[MediaCommentsFeed](Verbs.GET, apiPath)
-  }
-
-  /**
     * Get the list of 'users' the authenticated user follows.
     *
     * @param userId
@@ -187,7 +173,8 @@ class Instagram(auth: Auth) {
     * @param pagination
     */
   def getUserFollowListNextPageByPage(pagination: Pagination): Future[Option[UserFeed]] = {
-    getUserFeedInfoNextPage(pagination)
+    val page: PaginationHelper.Page = PaginationHelper.parseNextUrl(pagination, Constants.API_URL)
+    request[UserFeed](Verbs.GET, page.apiPath, Option(page.queryStringParams))
   }
 
   /**
@@ -296,9 +283,9 @@ class Instagram(auth: Auth) {
     * @return a LikesFeed object.
     * if any error occurs.
     */
-  def setUserLike(mediaId: String): Future[Option[LikesFeed]] = {
+  def setUserLike(mediaId: String): Future[Option[NoDataResponse]] = {
     val apiMethod: String = Methods.LIKES_BY_MEDIA_ID format mediaId
-    request[LikesFeed](Verbs.POST, apiMethod)
+    request[NoDataResponse](Verbs.POST, apiMethod)
   }
 
   /**
@@ -343,9 +330,41 @@ class Instagram(auth: Auth) {
     * @return a LikesFeed object.
     * if any error occurs.
     */
-  def deleteUserLike(mediaId: String): Future[Option[LikesFeed]] = {
+  def deleteUserLike(mediaId: String): Future[Option[NoDataResponse]] = {
     val apiPath: String = Methods.LIKES_BY_MEDIA_ID format mediaId
-    request[LikesFeed](Verbs.DELETE, apiPath)
+    request[NoDataResponse](Verbs.DELETE, apiPath)
+  }
+
+  /**
+    * Get a full list of comments on a media.
+    *
+    * @param mediaId
+    * a mediaId
+    * @return a MediaCommentsFeed object.
+    * if any error occurs.
+    */
+  def getMediaComments(mediaId: String): Future[Option[MediaCommentsFeed]] = {
+    val apiPath: String = Methods.MEDIA_COMMENTS format mediaId
+    request[MediaCommentsFeed](Verbs.GET, apiPath)
+  }
+
+  /**
+    * Create a comment on a media.
+    *
+    * @param mediaId
+    * a mediaId
+    * @param text
+    * Text to post as a comment on the media as specified in
+    * media-id.
+    * @return a MediaCommentResponse feed.
+    * if any error occurs.
+    */
+  def setMediaComments(mediaId: String, text: String): Future[Option[NoDataResponse]] = {
+    val params: Map[String, Option[String]] = Map(
+      QueryParam.TEXT -> Some(text)
+    )
+    val apiPath: String = Methods.MEDIA_COMMENTS format mediaId
+    request[NoDataResponse](Verbs.POST, apiPath, Some(params))
   }
 
   /**
@@ -359,9 +378,9 @@ class Instagram(auth: Auth) {
     * @return a MediaCommentResponse feed.
     * if any error occurs.
     */
-  def deleteMediaCommentById(mediaId: String, commentId: String): Future[Option[MediaCommentResponse]] = {
+  def deleteMediaCommentById(mediaId: String, commentId: String): Future[Option[NoDataResponse]] = {
     val apiPath: String = Methods.DELETE_MEDIA_COMMENTS format (mediaId, commentId)
-    request[MediaCommentResponse](Verbs.DELETE, apiPath)
+    request[NoDataResponse](Verbs.DELETE, apiPath)
   }
 
   /**
@@ -385,25 +404,6 @@ class Instagram(auth: Auth) {
     */
   def getUserFollowedByListNextPage(pagination: Pagination): Future[Option[UserFeed]] = {
     getUserFeedInfoNextPage(pagination)
-  }
-
-  /**
-    * Create a comment on a media.
-    *
-    * @param mediaId
-    * a mediaId
-    * @param text
-    * Text to post as a comment on the media as specified in
-    * media-id.
-    * @return a MediaCommentResponse feed.
-    * if any error occurs.
-    */
-  def setMediaComments(mediaId: String, text: String): Future[Option[MediaCommentResponse]] = {
-    val params: Map[String, Option[String]] = Map(
-      QueryParam.TEXT -> Some(text)
-    )
-    val apiPath: String = Methods.MEDIA_COMMENTS format mediaId
-    request[MediaCommentResponse](Verbs.POST, apiPath, Some(params))
   }
 
   /**

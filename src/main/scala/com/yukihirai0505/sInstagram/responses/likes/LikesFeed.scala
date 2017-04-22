@@ -6,7 +6,7 @@ import com.yukihirai0505.sInstagram.responses.common.{Meta, User}
   * author Yuki Hirai on 2016/11/09.
   */
 case class LikesFeed(
-  data: List[User],
+  data: List[LikerUserInfo],
   meta: Option[Meta]
 )
 
