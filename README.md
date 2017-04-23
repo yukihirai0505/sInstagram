@@ -1,5 +1,7 @@
 # sInstagram [![Build Status](https://img.shields.io/travis/yukihirai0505/sInstagram.svg)](https://travis-ci.org/yukihirai0505/sInstagram) [![Maven Central](https://img.shields.io/maven-central/v/com.yukihirai0505/sinstagram_2.11.svg)](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.yukihirai0505%22%20AND%20a%3A%22sinstagram_2.11%22) [![Coverage Status](https://img.shields.io/coveralls/yukihirai0505/sInstagram/master.svg)](https://coveralls.io/github/yukihirai0505/sInstagram?branch=master) [![Join the chat at https://gitter.im/yukihirai0505/sInstagram](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/yukihirai0505/sInstagram)
 
+[![Join the chat at https://gitter.im/yukihirai0505/sInstagram](https://badges.gitter.im/yukihirai0505/sInstagram.svg)](https://gitter.im/yukihirai0505/sInstagram?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A Scala library for the Instagram API.
 An asynchronous non-blocking Scala Instagram API Wrapper,
 implemented using play-json.
