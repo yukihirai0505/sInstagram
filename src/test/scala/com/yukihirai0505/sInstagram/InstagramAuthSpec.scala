@@ -14,7 +14,7 @@ class InstagramAuthSpec extends FlatSpec with Matchers {
 
   "authUrl" should "return auth url" in {
     val scopes: Seq[Scope] = Seq(Scope.BASIC)
-    val authUrl = instagramAuth.authURL(scopes = scopes, callbackUrl = "")
+    val authUrl = instagramAuth.authURL(clientId = "", scopes = scopes, callbackUrl = "")
     assert(authUrl.nonEmpty)
   }
 }
