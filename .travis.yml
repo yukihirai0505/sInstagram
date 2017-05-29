@@ -18,3 +18,10 @@ after_success:
   - sbt ++$TRAVIS_SCALA_VERSION coveralls
 notifications:
   email: false
+# Ref: https://stackoverflow.com/questions/15674064/github-submodule-access-rights-travis-ci
+git:
+    submodules: false
+# Use sed to replace the SSH URL with the public URL, then initialize submodules
+before_install:
+    - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+    - git submodule update --init --recursive
