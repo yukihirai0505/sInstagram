@@ -18,7 +18,6 @@ lazy val root = Project(id = "root", base = file("./"))
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
-  "com.github.tototoshi" %% "play-json-naming" % "1.1.0",
   "org.scalatest" % "scalatest_2.11" % "3.0.0"
 )
 
