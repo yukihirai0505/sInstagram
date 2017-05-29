@@ -10,12 +10,14 @@ scalaVersion := "2.11.8"
 
 scalacOptions += "-feature"
 
+lazy val scalaRequestJson = ProjectRef(file("./git-submodules/scala-request-json"), "scala-request-json")
+lazy val root = Project(id = "root", base = file("./"))
+  .dependsOn(scalaRequestJson)
+  .aggregate(scalaRequestJson)
+
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.play" % "play-json_2.11" % "2.5.9",
-  "net.databinder.dispatch" %% "dispatch-core" % "0.11.3",
-  "com.netaporter" %% "scala-uri" % "0.4.16",
   "com.github.tototoshi" %% "play-json-naming" % "1.1.0",
   "org.scalatest" % "scalatest_2.11" % "3.0.0"
 )

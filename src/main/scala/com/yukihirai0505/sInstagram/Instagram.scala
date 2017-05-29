@@ -3,8 +3,10 @@ package com.yukihirai0505.sInstagram
 import java.net.URLEncoder
 
 import play.api.libs.json.Reads
+
 import com.netaporter.uri.Uri._
-import com.yukihirai0505.sInstagram.http.{Request, Verbs}
+import com.yukihirai0505.com.scala.Request
+import com.yukihirai0505.com.scala.constants.Verbs
 import com.yukihirai0505.sInstagram.model.{Constants, Methods, OAuthConstants, QueryParam, Relationship}
 import com.yukihirai0505.sInstagram.responses.auth.{AccessToken, Auth, SignedAccessToken}
 import com.yukihirai0505.sInstagram.responses.comments.MediaCommentsFeed
