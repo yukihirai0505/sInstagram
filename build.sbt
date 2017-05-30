@@ -10,14 +10,10 @@ scalaVersion := "2.11.8"
 
 scalacOptions += "-feature"
 
-lazy val scalaRequestJson = ProjectRef(file("./git-submodules/scala-request-json"), "scala-request-json")
-lazy val root = Project(id = "root", base = file("./"))
-  .dependsOn(scalaRequestJson)
-  .aggregate(scalaRequestJson)
-
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
+  "com.yukihirai0505" % "scala-request-json_2.11" % "1.0",
   "org.scalatest" % "scalatest_2.11" % "3.0.0"
 )
 
@@ -64,6 +60,6 @@ pomExtra :=
     <developer>
       <id>yukihirai0505</id>
       <name>Yuki Hirai</name>
-      <url>https://blog.yukihirai0505.com</url>
+      <url>https://yukihirai0505.github.io</url>
     </developer>
   </developers>

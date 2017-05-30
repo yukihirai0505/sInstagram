@@ -1,3 +1,0 @@
-[submodule "git-submodules/scala-request-json"]
-	path = git-submodules/scala-request-json
-	url = git@github.com:yukihirai0505/scala-request-json.git
