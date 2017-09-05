@@ -13,7 +13,7 @@ scalacOptions += "-feature"
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
-  "com.yukihirai0505" % "scala-request-json_2.11" % "1.0",
+  "com.yukihirai0505" % "scala-request-json_2.11" % "1.3",
   "org.scalatest" % "scalatest_2.11" % "3.0.0"
 )
 
@@ -45,21 +45,21 @@ description := "A Scala library for the Instagram API"
 
 pomExtra :=
   <url>https://github.com/yukihirai0505/sInstagram</url>
-  <licenses>
-    <license>
-      <name>MIT</name>
-      <url>https://github.com/yukihirai0505/sInstagram/blob/master/LICENSE.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <scm>
-    <url>git@github.com:yukihirai0505/sInstagram.git</url>
-    <connection>scm:git:git@github.com:yukihirai0505/sInstagram.git</connection>
-  </scm>
-  <developers>
-    <developer>
-      <id>yukihirai0505</id>
-      <name>Yuki Hirai</name>
-      <url>https://yukihirai0505.github.io</url>
-    </developer>
-  </developers>
+    <licenses>
+      <license>
+        <name>MIT</name>
+        <url>https://github.com/yukihirai0505/sInstagram/blob/master/LICENSE.txt</url>
+        <distribution>repo</distribution>
+      </license>
+    </licenses>
+    <scm>
+      <url>git@github.com:yukihirai0505/sInstagram.git</url>
+      <connection>scm:git:git@github.com:yukihirai0505/sInstagram.git</connection>
+    </scm>
+    <developers>
+      <developer>
+        <id>yukihirai0505</id>
+        <name>Yuki Hirai</name>
+        <url>https://yukihirai0505.github.io</url>
+      </developer>
+    </developers>

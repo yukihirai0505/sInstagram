@@ -1,5 +1,6 @@
 package com.yukihirai0505.sInstagram
 
+import com.yukihirai0505.com.scala.model.Response
 import com.yukihirai0505.sInstagram.exceptions.OAuthException
 import com.yukihirai0505.sInstagram.model.Relationship
 import com.yukihirai0505.sInstagram.responses.auth.AccessToken
@@ -62,9 +63,9 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getCurrentUserInfo" should "return a Some[UserInfo]" in {
     val request = Await.result(instagram.getCurrentUserInfo, 10 seconds)
-    userId = request.flatMap(_.data.id)
-    request should be(anInstanceOf[Some[UserInfo]])
-    request.get.data.id.get should be(userId.getOrElse(""))
+    userId = request.data.flatMap(_.data.id)
+    request should be(anInstanceOf[Response[UserInfo]])
+    request.data.get.data.id.get should be(userId.getOrElse(""))
   }
 
 
@@ -74,19 +75,19 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getRecentMediaFeed" should "return a Some[MediaFeed]" in {
     val request = Await.result(instagram.getRecentMediaFeed(), 10 seconds)
-    mediaId = request.flatMap(_.data.lastOption.flatMap(_.id))
-    locationId = request.flatMap(_.data.lastOption.flatMap(_.location.flatMap(x => Some(x.id.toString()))))
-    request should be(anInstanceOf[Some[MediaFeed]])
+    mediaId = request.data.flatMap(_.data.lastOption.flatMap(_.id))
+    locationId = request.data.flatMap(_.data.lastOption.flatMap(_.location.flatMap(x => Some(x.id.toString()))))
+    request should be(anInstanceOf[Response[MediaFeed]])
   }
 
   "getUserFollowList" should "return a Some[UserFeed]" in {
     val request = Await.result(instagram.getUserFollowList(userId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[UserFeed]])
+    request should be(anInstanceOf[Response[UserFeed]])
   }
 
   "getUserFollowListNextPage" should "return a Some[UserFeed]" in {
     val request = Await.result(instagram.getUserFollowListNextPage(userId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[UserFeed]])
+    request should be(anInstanceOf[Response[UserFeed]])
   }
 
   "getUserFollowListNextPageByPage" should "return a OAuthException by None pagination" in {
@@ -95,44 +96,44 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getUserLikedMediaFeed" should "return a Some[MediaFeed]" in {
     val request = Await.result(instagram.getUserLikedMediaFeed(), 10 seconds)
-    request should be(anInstanceOf[Some[MediaFeed]])
+    request should be(anInstanceOf[Response[MediaFeed]])
   }
 
   "searchUser" should "return a Some[UserFeed]" in {
     val request = Await.result(instagram.searchUser("i_do_not_like_holidays"), 10 seconds)
-    request should be(anInstanceOf[Some[UserFeed]])
+    request should be(anInstanceOf[Response[UserFeed]])
   }
 
   "getLocationInfo" should "return a Some[LocationInfo]" in {
     val request = Await.result(instagram.getLocationInfo(locationId.getOrElse("")), 10 seconds)
-    latitude = request.flatMap(_.data.latitude)
-    longitude = request.flatMap(_.data.longitude)
-    request should be(anInstanceOf[Some[LocationInfo]])
+    latitude = request.data.flatMap(_.data.latitude)
+    longitude = request.data.flatMap(_.data.longitude)
+    request should be(anInstanceOf[Response[LocationInfo]])
   }
 
   "getTagInfo" should "return a Some[TagInfoFeed]" in {
     val request = Await.result(instagram.getTagInfo("test"), 10 seconds)
-    request should be(anInstanceOf[Some[TagInfoFeed]])
+    request should be(anInstanceOf[Response[TagInfoFeed]])
   }
 
   "searchLocation" should "return a Some[LocationSearchFeed]" in {
     val request = Await.result(instagram.searchLocation(latitude.getOrElse(0), longitude.getOrElse(0)), 10 seconds)
-    request should be(anInstanceOf[Some[LocationSearchFeed]])
+    request should be(anInstanceOf[Response[LocationSearchFeed]])
   }
 
   "getRecentMediaByLocation" should "return a Some[MediaFeed]" in {
     val request = Await.result(instagram.getRecentMediaByLocation(locationId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[MediaFeed]])
+    request should be(anInstanceOf[Response[MediaFeed]])
   }
 
   "setUserLike" should "return a Some[LikesFeed]" in {
     val request = Await.result(instagram.setUserLike(mediaId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[LikesFeed]])
+    request should be(anInstanceOf[Response[LikesFeed]])
   }
 
   "getMediaInfo" should "return a Some[MediaInfoFeed]" in {
     val request = Await.result(instagram.getMediaInfo(mediaId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[MediaInfoFeed]])
+    request should be(anInstanceOf[Response[MediaInfoFeed]])
   }
 
   "getRecentMediaNextPage" should "return a OAuthException by None pagination" in {
@@ -145,28 +146,28 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "deleteUserLike" should "return a Some[NoDataResponse]" in {
     val request = Await.result(instagram.deleteUserLike(mediaId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[NoDataResponse]])
+    request should be(anInstanceOf[Response[NoDataResponse]])
   }
 
   "setMediaComments" should "return a Some[NoDataResponse]" in {
     val request = Await.result(instagram.setMediaComments(mediaId.getOrElse(""), "test"), 10 seconds)
-    request should be(anInstanceOf[Some[NoDataResponse]])
+    request should be(anInstanceOf[Response[NoDataResponse]])
   }
 
   "getMediaComments" should "return a Some[MediaCommentsFeed]" in {
     val request = Await.result(instagram.getMediaComments(mediaId.getOrElse("")), 10 seconds)
-    mediaCommentId = request.flatMap(_.data.lastOption.flatMap(_.id))
-    request should be(anInstanceOf[Some[MediaCommentsFeed]])
+    mediaCommentId = request.data.flatMap(_.data.lastOption.flatMap(_.id))
+    request should be(anInstanceOf[Response[MediaCommentsFeed]])
   }
 
   "deleteMediaCommentById" should "return a Some[NoDataResponse]" in {
     val request = Await.result(instagram.deleteMediaCommentById(mediaId.getOrElse(""), mediaCommentId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[NoDataResponse]])
+    request should be(anInstanceOf[Response[NoDataResponse]])
   }
 
   "getUserFollowedByList" should "return a Some[UserFeed]" in {
     val request = Await.result(instagram.getUserFollowedByList(userId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[UserFeed]])
+    request should be(anInstanceOf[Response[UserFeed]])
   }
 
   "getUserFollowedByListNextPage" should "return a OAuthException by None pagination" in {
@@ -174,48 +175,48 @@ class InstagramSpec extends FlatSpec with Matchers {
   }
 
   "getMediaInfoByShortCode" should "return a Some[MediaInfoFeed]" in {
-    val request = Await.result(instagram.getMediaInfoByShortCode("BS7WNy9ADi8"), 10 seconds)
-    request should be(anInstanceOf[Some[MediaInfoFeed]])
+    val request = Await.result(instagram.getMediaInfoByShortCode("BYjumBPndzs"), 10 seconds)
+    request should be(anInstanceOf[Response[MediaInfoFeed]])
   }
 
   "searchTags" should "return a Some[TagSearchFeed]" in {
     val request = Await.result(instagram.searchTags("test"), 10 seconds)
-    request should be(anInstanceOf[Some[TagSearchFeed]])
+    request should be(anInstanceOf[Response[TagSearchFeed]])
   }
 
   "getRecentMediaFeedTags" should "return a Some[MediaFeed]" in {
     val request = Await.result(instagram.getRecentMediaFeedTags("test"), 10 seconds)
-    request should be(anInstanceOf[Some[MediaFeed]])
+    request should be(anInstanceOf[Response[MediaFeed]])
   }
 
   "setUserRelationship" should "return a Some[RelationshipFeed]" in {
     val request = Await.result(instagram.setUserRelationship(userId.getOrElse(""), Relationship.FOLLOW), 10 seconds)
-    request should be(anInstanceOf[Some[RelationshipFeed]])
+    request should be(anInstanceOf[Response[RelationshipFeed]])
   }
 
   "getUserRequestedBy" should "return a Some[UserFeed]" in {
     val request = Await.result(instagram.getUserRequestedBy, 10 seconds)
-    request should be(anInstanceOf[Some[UserFeed]])
+    request should be(anInstanceOf[Response[UserFeed]])
   }
 
   "getUserRelationship" should "return a Some[RelationshipFeed]" in {
     val request = Await.result(instagram.getUserRelationship(userId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[RelationshipFeed]])
+    request should be(anInstanceOf[Response[RelationshipFeed]])
   }
 
   "searchFacebookPlace" should "return a Some[LocationSearchFeed]" in {
     val request = Await.result(instagram.searchFacebookPlace(locationId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[LocationSearchFeed]])
+    request should be(anInstanceOf[Response[LocationSearchFeed]])
   }
 
   "searchMedia" should "return a Some[MediaFeed]" in {
     val request = Await.result(instagram.searchMedia(latitude.getOrElse(0), longitude.getOrElse(0)), 10 seconds)
-    request should be(anInstanceOf[Some[MediaFeed]])
+    request should be(anInstanceOf[Response[MediaFeed]])
   }
 
   "getUserLikes" should "return a Some[LikesFeed]" in {
     val request = Await.result(instagram.getUserLikes(mediaId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Some[LikesFeed]])
+    request should be(anInstanceOf[Response[LikesFeed]])
   }
 
 }
