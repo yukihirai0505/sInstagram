@@ -185,7 +185,7 @@ class InstagramSpec extends FlatSpec with Matchers {
   }
 
   "getRecentMediaFeedTags" should "return a Some[MediaFeed]" in {
-    val request = Await.result(instagram.getRecentMediaFeedTags("test"), 10 seconds)
+    val request = Await.result(instagram.getRecentMediaFeedTags("フォトジェニック"), 10 seconds)
     request should be(anInstanceOf[Response[MediaFeed]])
   }
 

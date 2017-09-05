@@ -18,7 +18,8 @@ case class MediaFeedData(
   likes: Option[Likes],
   link: Option[String],
   location: Option[MediaLocation],
-  tags: Option[List[String]]
+  tags: Option[List[String]],
+  user: Option[User]
 )
 object MediaFeedData {
   implicit val MediaFeedFormat = JsonNaming.snakecase(Json.format[MediaFeedData])
