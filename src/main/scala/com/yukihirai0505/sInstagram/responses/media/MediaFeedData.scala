@@ -10,16 +10,16 @@ import play.api.libs.json.Json
 case class MediaFeedData(
   caption: Option[Caption],
   comments: Option[Comments],
-  createdTime: Option[String],
-  id: Option[String],
+  createdTime: String,
+  id: String,
   filter: Option[String],
   images: Option[Images],
   videos: Option[Videos],
   likes: Option[Likes],
-  link: Option[String],
+  link: String,
   location: Option[MediaLocation],
   tags: Option[List[String]],
-  user: Option[User]
+  user: User
 )
 object MediaFeedData {
   implicit val MediaFeedFormat = JsonNaming.snakecase(Json.format[MediaFeedData])

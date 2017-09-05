@@ -1,10 +1,10 @@
 package com.yukihirai0505.sInstagram.responses.common
 
 case class Location(
-  id: Option[String],
-  latitude: Option[Double],
-  longitude: Option[Double],
-  name: Option[String]
+  id: String,
+  latitude: Double,
+  longitude: Double,
+  name: String
 )
 
 import play.api.libs.json.Json

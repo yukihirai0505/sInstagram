@@ -6,7 +6,7 @@ import com.yukihirai0505.sInstagram.responses.common._
   * author Yuki Hirai on 2016/11/09.
   */
 case class MediaFeed(
-  data: List[MediaFeedData],
+  data: Seq[MediaFeedData] = Seq.empty[MediaFeedData],
   pagination: Option[Pagination],
   meta: Option[Meta])
 

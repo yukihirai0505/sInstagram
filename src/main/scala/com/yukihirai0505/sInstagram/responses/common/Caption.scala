@@ -1,10 +1,10 @@
 package com.yukihirai0505.sInstagram.responses.common
 
 case class Caption(
-  createdTime: Option[String],
-  from: Option[FromTagData],
-  id: Option[String],
-  text: Option[String]
+  createdTime: String,
+  from: FromTagData,
+  id: String,
+  text: String
 )
 
 import com.github.tototoshi.play.json.JsonNaming

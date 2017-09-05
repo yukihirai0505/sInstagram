@@ -1,11 +1,11 @@
 package com.yukihirai0505.sInstagram.responses.likes
 
 case class LikerUserInfo(
-  username: Option[String],
-  firstName: Option[String],
-  lastName: Option[String],
-  `type`: Option[String],
-  id: Option[String]
+  username: String,
+  firstName: String,
+  lastName: String,
+  `type`: String,
+  id: String
 )
 
 import com.github.tototoshi.play.json.JsonNaming

@@ -5,8 +5,7 @@ package com.yukihirai0505.sInstagram.responses.relationships
   */
 case class RelationshipFeedData(
   incomingStatus: Option[String],
-  outgoingStatus: Option[String],
-  targetUserIsPrivate: Option[Boolean]
+  outgoingStatus: Option[String]
 )
 
 import com.github.tototoshi.play.json.JsonNaming

@@ -7,13 +7,13 @@ import play.api.libs.json.Json
   * author Yuki Hirai on 2016/11/09.
   */
 case class UserInfoData(
-  bio: Option[String],
-  counts: Option[Counts],
-  id: Option[String],
-  profilePicture: Option[String],
-  username: Option[String],
-  fullName: Option[String],
-  website: Option[String]
+  bio: String,
+  counts: Counts,
+  id: String,
+  profilePicture: String,
+  username: String,
+  fullName: String,
+  website: String
 )
 
 object UserInfoData {
