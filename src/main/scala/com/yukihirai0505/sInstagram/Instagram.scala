@@ -102,7 +102,7 @@ class Instagram(auth: Auth) {
     } else {
       request << parameters
     }
-    println(requestWithParams.url)
+    //println(requestWithParams.url)
     Request.sendRequestJson[T](requestWithParams)
   }
 
