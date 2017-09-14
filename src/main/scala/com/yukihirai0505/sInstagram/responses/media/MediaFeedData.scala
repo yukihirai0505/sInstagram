@@ -21,6 +21,7 @@ case class MediaFeedData(
                           location: Option[MediaLocation],
                           tags: Seq[String],
                           `type`: String,
+                          userHasLiked: Boolean,
                           usersInPhoto: Seq[UsersInPhoto],
                           user: User
                         )
