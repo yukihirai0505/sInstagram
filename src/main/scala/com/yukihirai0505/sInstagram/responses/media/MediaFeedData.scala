@@ -8,7 +8,7 @@ import play.api.libs.json.Json
   * author Yuki Hirai on 2016/11/09.
   */
 case class MediaFeedData(
-                          caption: Caption,
+                          caption: Option[Caption],
                           comments: Comments,
                           createdTime: String,
                           id: String,
