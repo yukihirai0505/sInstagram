@@ -106,8 +106,8 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getLocationInfo" should "return a Some[LocationInfo]" in {
     val request = Await.result(instagram.getLocationInfo(locationId.getOrElse("")), 10 seconds)
-    latitude = request.data.flatMap(x => Some(x.data.latitude))
-    longitude = request.data.flatMap(x => Some(x.data.longitude))
+    latitude = request.data.flatMap(x => x.data.latitude)
+    longitude = request.data.flatMap(x => x.data.longitude)
     request should be(anInstanceOf[Response[LocationInfo]])
   }
 
@@ -175,7 +175,7 @@ class InstagramSpec extends FlatSpec with Matchers {
   }
 
   "getMediaInfoByShortCode" should "return a Some[MediaInfoFeed]" in {
-    val request = Await.result(instagram.getMediaInfoByShortCode("BYSxYrlHyPF"), 10 seconds)
+    val request = Await.result(instagram.getMediaInfoByShortCode("BZfmV4RFklR"), 10 seconds)
     request should be(anInstanceOf[Response[MediaInfoFeed]])
   }
 
@@ -205,7 +205,7 @@ class InstagramSpec extends FlatSpec with Matchers {
   }
 
   "searchFacebookPlace" should "return a Some[LocationSearchFeed]" in {
-    val request = Await.result(instagram.searchFacebookPlace("273471170716"), 10 seconds)
+    val request = Await.result(instagram.searchFacebookPlace(locationId.getOrElse("")), 10 seconds)
     request should be(anInstanceOf[Response[LocationSearchFeed]])
   }
 
