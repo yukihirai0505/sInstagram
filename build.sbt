@@ -4,7 +4,7 @@ sonatypeSettings
 
 name := "sInstagram"
 
-version := "0.1.7"
+version := "0.1.8"
 
 scalaVersion := "2.11.8"
 
@@ -13,7 +13,7 @@ scalacOptions += "-feature"
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
-  "com.yukihirai0505" % "scala-request-json_2.11" % "1.4",
+  "com.yukihirai0505" % "scala-request-json_2.11" % "1.5",
   "org.scalatest" % "scalatest_2.11" % "3.0.0"
 )
 
