@@ -15,6 +15,7 @@ import com.yukihirai0505.sInstagram.responses.users.basicinfo.UserInfo
 import com.yukihirai0505.sInstagram.responses.users.feed.UserFeed
 import org.scalatest.matchers.{BePropertyMatchResult, BePropertyMatcher}
 import org.scalatest.{FlatSpec, Matchers}
+import org.slf4j.Logger
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -76,7 +77,7 @@ class InstagramSpec extends FlatSpec with Matchers {
   "getRecentMediaFeed" should "return a Some[MediaFeed]" in {
     val request = Await.result(instagram.getRecentMediaFeed(), 10 seconds)
     mediaId = request.data.flatMap(_.data.lastOption.flatMap(x => Some(x.id)))
-    locationId = request.data.flatMap(_.data.lastOption.flatMap(_.location.flatMap(x => Some(x.id.toString()))))
+    locationId = request.data.flatMap(_.data.lastOption.flatMap(_.location.flatMap(x => Some(x.id.getOrElse("").toString))))
     request should be(anInstanceOf[Response[MediaFeed]])
   }
 
