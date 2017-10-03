@@ -7,7 +7,7 @@ package com.yukihirai0505.sInstagram.responses.common
 import play.api.libs.json._
 
 case class MediaLocation(
-                          id: Option[Int],
+                          id: Option[Long],
                           latitude: Option[Double],
                           longitude: Option[Double],
                           name: Option[String]
