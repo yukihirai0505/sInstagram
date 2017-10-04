@@ -6,7 +6,7 @@ import com.yukihirai0505.sInstagram.responses.common.Meta
   * author Yuki Hirai on 2016/11/09.
   */
 case class RelationshipFeed(
-  data: RelationshipFeedData,
+  data: Option[RelationshipFeedData],
   meta: Option[Meta]
 )
 

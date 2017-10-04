@@ -7,7 +7,7 @@ import play.api.libs.json.Json
   * author Yuki Hirai on 2016/11/09.
   */
 case class TagInfoFeed(
-  data: TagInfoFeedData,
+  data: Option[TagInfoFeedData],
   meta: Option[Meta]
 )
 object TagInfoFeed {

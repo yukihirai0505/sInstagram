@@ -6,7 +6,7 @@ import com.yukihirai0505.sInstagram.responses.common.{Location, Meta}
   * author Yuki Hirai on 2016/11/09.
   */
 case class LocationInfo(
-  data: Location,
+  data: Option[Location],
   meta: Option[Meta]
 )
 

@@ -64,9 +64,9 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getCurrentUserInfo" should "return a Some[UserInfo]" in {
     val request = Await.result(instagram.getCurrentUserInfo, 10 seconds)
-    userId = request.data.flatMap(x => Some(x.data.id))
+    userId = request.data.flatMap(_.data.flatMap(d => Some(d.id)))
     request should be(anInstanceOf[Response[UserInfo]])
-    request.data.get.data.id should be(userId.getOrElse(""))
+    request.data.get.data.get.id should be(userId.getOrElse(""))
   }
 
 
@@ -76,8 +76,8 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getRecentMediaFeed" should "return a Some[MediaFeed]" in {
     val request = Await.result(instagram.getRecentMediaFeed(), 10 seconds)
-    mediaId = request.data.flatMap(_.data.lastOption.flatMap(x => Some(x.id)))
-    locationId = request.data.flatMap(_.data.lastOption.flatMap(_.location.flatMap(x => Some(x.id.getOrElse("").toString))))
+    mediaId = request.data.flatMap(_.data.flatMap(_.lastOption.flatMap(x => Some(x.id))))
+    locationId = request.data.flatMap(_.data.flatMap(_.lastOption.flatMap(_.location.flatMap(x => Some(x.id.getOrElse("").toString)))))
     request should be(anInstanceOf[Response[MediaFeed]])
   }
 
@@ -107,14 +107,20 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getLocationInfo" should "return a Some[LocationInfo]" in {
     val request = Await.result(instagram.getLocationInfo(locationId.getOrElse("")), 10 seconds)
-    latitude = request.data.flatMap(x => x.data.latitude)
-    longitude = request.data.flatMap(x => x.data.longitude)
+    latitude = request.data.flatMap(x => x.data.flatMap(_.latitude))
+    longitude = request.data.flatMap(x => x.data.flatMap(_.longitude))
     request should be(anInstanceOf[Response[LocationInfo]])
   }
 
-  "getTagInfo" should "return a Some[TagInfoFeed]" in {
+  "getTagInfo200" should "return a Some[TagInfoFeed]" in {
     val request = Await.result(instagram.getTagInfo("test"), 10 seconds)
     request should be(anInstanceOf[Response[TagInfoFeed]])
+  }
+
+  "getTagInfo400" should "return a Some[TagInfoFeed]" in {
+    // "lolita" will be 400 This tag cannot be viewed
+    val request = Await.result(instagram.getTagInfo("lolita"), 10 seconds)
+    request.data.flatMap(_.meta.flatMap(d => Some(d.code))) should be(Some(400))
   }
 
   "searchLocation" should "return a Some[LocationSearchFeed]" in {
@@ -157,7 +163,7 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getMediaComments" should "return a Some[MediaCommentsFeed]" in {
     val request = Await.result(instagram.getMediaComments(mediaId.getOrElse("")), 10 seconds)
-    mediaCommentId = request.data.flatMap(_.data.lastOption.flatMap(x => Some(x.id)))
+    mediaCommentId = request.data.flatMap(_.data.flatMap(_.lastOption).flatMap(x => Some(x.id)))
     request should be(anInstanceOf[Response[MediaCommentsFeed]])
   }
 

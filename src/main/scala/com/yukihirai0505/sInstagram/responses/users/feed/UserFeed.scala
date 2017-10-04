@@ -6,7 +6,7 @@ import com.yukihirai0505.sInstagram.responses.common.{Meta, Pagination, User}
   * author Yuki Hirai on 2016/11/09.
   */
 case class UserFeed(
-  data: List[User],
+  data: Option[Seq[User]],
   pagination: Option[Pagination],
   meta: Option[Meta]
 )

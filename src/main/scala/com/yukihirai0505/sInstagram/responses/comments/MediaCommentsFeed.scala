@@ -6,7 +6,7 @@ import com.yukihirai0505.sInstagram.responses.common.Meta
   * author Yuki Hirai on 2016/11/09.
   */
 case class MediaCommentsFeed(
-                              data: Seq[CommentData],
+                              data: Option[Seq[CommentData]],
                               meta: Option[Meta]
                             )
 
