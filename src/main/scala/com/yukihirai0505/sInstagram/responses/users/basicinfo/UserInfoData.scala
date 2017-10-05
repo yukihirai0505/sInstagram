@@ -13,7 +13,8 @@ case class UserInfoData(
   profilePicture: String,
   username: String,
   fullName: String,
-  website: String
+  website: String,
+  isBusiness: Boolean
 )
 
 object UserInfoData {
