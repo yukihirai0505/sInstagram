@@ -5,7 +5,7 @@ import com.yukihirai0505.sInstagram.exceptions.OAuthException
 import com.yukihirai0505.sInstagram.model.Relationship
 import com.yukihirai0505.sInstagram.responses.auth.AccessToken
 import com.yukihirai0505.sInstagram.responses.comments.MediaCommentsFeed
-import com.yukihirai0505.sInstagram.responses.common.{NoDataResponse, Pagination}
+import com.yukihirai0505.sInstagram.responses.common.{NoDataResponse, Pagination, User}
 import com.yukihirai0505.sInstagram.responses.likes.LikesFeed
 import com.yukihirai0505.sInstagram.responses.locations.{LocationInfo, LocationSearchFeed}
 import com.yukihirai0505.sInstagram.responses.media.{MediaFeed, MediaInfoFeed}
@@ -15,9 +15,9 @@ import com.yukihirai0505.sInstagram.responses.users.basicinfo.UserInfo
 import com.yukihirai0505.sInstagram.responses.users.feed.UserFeed
 import org.scalatest.matchers.{BePropertyMatchResult, BePropertyMatcher}
 import org.scalatest.{FlatSpec, Matchers}
-import org.slf4j.Logger
+import play.api.libs.iteratee.Execution
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor}
 import scala.concurrent.duration._
 import scala.io.Source
 import scala.language.postfixOps
@@ -54,6 +54,7 @@ class InstagramSpec extends FlatSpec with Matchers {
   val instagram = new Instagram(auth)
   val wrongToken = AccessToken("this is a bullshit access token")
   val nonePage = new Pagination(None, None, None, None, None, None)
+  implicit val executionContextExecutor: ExecutionContextExecutor = Execution.trampoline
 
   var userId: Option[String] = None
   var mediaId: Option[String] = None
@@ -82,17 +83,18 @@ class InstagramSpec extends FlatSpec with Matchers {
   }
 
   "getUserFollowList" should "return a Some[UserFeed]" in {
-    val request = Await.result(instagram.getUserFollowList, 10 seconds)
-    request should be(anInstanceOf[Response[UserFeed]])
-  }
-
-  "getUserFollowListNextPage" should "return a Some[UserFeed]" in {
-    val request = Await.result(instagram.getUserFollowListNextPage(), 10 seconds)
+    val request = Await.result(instagram.getUserFollowList(), 10 seconds)
     request should be(anInstanceOf[Response[UserFeed]])
   }
 
   "getUserFollowListNextPageByPage" should "return a OAuthException by None pagination" in {
     an[OAuthException] should be thrownBy Await.result(instagram.getUserFollowListNextPageByPage(nonePage), 10 seconds)
+  }
+
+  "getUserAllFollowsList" should "return Seq[User]" in {
+    val request = Await.result(instagram.getUserAllFollowsList, 10 seconds)
+    if (request.isEmpty) request.isEmpty should be(true)
+    else request should be(anInstanceOf[Seq[User]])
   }
 
   "getUserLikedMediaFeed" should "return a Some[MediaFeed]" in {
@@ -179,6 +181,12 @@ class InstagramSpec extends FlatSpec with Matchers {
 
   "getUserFollowedByListNextPage" should "return a OAuthException by None pagination" in {
     an[OAuthException] should be thrownBy Await.result(instagram.getUserFollowedByListNextPage(nonePage), 10 seconds)
+  }
+
+  "getUserAllFollowersList" should "return Seq[User]]" in {
+    val request = Await.result(instagram.getUserAllFollowersList, 10 seconds)
+    if (request.isEmpty) request.isEmpty should be(true)
+    else request should be(anInstanceOf[Seq[User]])
   }
 
   "getMediaInfoByShortCode" should "return a Some[MediaInfoFeed]" in {

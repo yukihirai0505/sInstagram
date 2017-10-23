@@ -21,6 +21,7 @@ import com.yukihirai0505.sInstagram.utils.PaginationHelper
 import dispatch._
 import play.api.libs.json.Reads
 
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
 
 
@@ -152,20 +153,10 @@ class Instagram(auth: Auth) {
   }
 
   /**
-    * Get the list of 'users' the authenticated user follows.
-    *
-    * @return a UserFeed object.
-    *         if any error occurs.
-    */
-  def getUserFollowList: Future[Response[UserFeed]] = {
-    getUserFollowListNextPage()
-  }
-
-  /**
     * Get the next page for list of 'users' the authenticated user follows.
     *
     */
-  def getUserFollowListNextPage(cursor: Option[String] = None): Future[Response[UserFeed]] = {
+  def getUserFollowList(cursor: Option[String] = None): Future[Response[UserFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.CURSOR -> cursor
     )
@@ -181,6 +172,35 @@ class Instagram(auth: Auth) {
   def getUserFollowListNextPageByPage(pagination: Pagination): Future[Response[UserFeed]] = {
     val page: PaginationHelper.Page = PaginationHelper.parseNextUrl(pagination, Constants.API_URL)
     request(Verbs.GET, page.apiPath, Option(page.queryStringParams))
+  }
+
+  /**
+    * Get all followers the authenticated
+    *
+    * @param executionContextExecutor
+    * @return
+    */
+  def getUserAllFollowsList(implicit executionContextExecutor: ExecutionContextExecutor): Future[Seq[User]] = {
+    def getFollowers(followers: Seq[User], pagination: Option[Pagination]): Future[Seq[User]] = {
+      pagination.flatMap(_.nextUrl) match {
+        case Some(_) =>
+          getUserFollowListNextPageByPage(pagination.get).flatMap {
+            case Response(data, _) =>
+              val d = data.get
+              getFollowers(d.data.getOrElse(Seq.empty[User]) ++ followers, d.pagination)
+            case _ => Future successful followers
+          }
+        case None => Future successful followers
+      }
+    }
+
+    getUserFollowList().flatMap { response =>
+      response.data match {
+        case Some(data) =>
+          getFollowers(data.data.getOrElse(Seq.empty), data.pagination)
+        case None => Future successful Seq.empty
+      }
+    }
   }
 
   /**
@@ -405,6 +425,35 @@ class Instagram(auth: Auth) {
   }
 
   /**
+    * Get all followers the authenticated
+    *
+    * @param executionContextExecutor
+    * @return
+    */
+  def getUserAllFollowersList(implicit executionContextExecutor: ExecutionContextExecutor): Future[Seq[User]] = {
+    def getFollowers(followers: Seq[User], pagination: Option[Pagination]): Future[Seq[User]] = {
+      pagination.flatMap(_.nextUrl) match {
+        case Some(_) =>
+          getUserFollowedByListNextPage(pagination.get).flatMap {
+            case Response(data, _) =>
+              val d = data.get
+              getFollowers(d.data.getOrElse(Seq.empty[User]) ++ followers, d.pagination)
+            case _ => Future successful followers
+          }
+        case None => Future successful followers
+      }
+    }
+
+    getUserFollowedByList().flatMap { response =>
+      response.data match {
+        case Some(data) =>
+          getFollowers(data.data.getOrElse(Seq.empty), data.pagination)
+        case None => Future successful Seq.empty
+      }
+    }
+  }
+
+  /**
     * Get information about a media object.
     *
     * @param shortCode
@@ -528,7 +577,7 @@ class Instagram(auth: Auth) {
     val params: Map[String, Option[String]] = Map(
       QueryParam.LATITUDE -> Some(latitude.toString),
       QueryParam.LONGITUDE -> Some(longitude.toString),
-      QueryParam.DISTANCE -> Option(distance.mkString)
+      QueryParam.DISTANCE -> distance.map(_.toString)
     )
     request(Verbs.GET, Methods.MEDIA_SEARCH, Some(params))
   }
