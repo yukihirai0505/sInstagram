@@ -169,7 +169,7 @@ class Instagram(auth: Auth) {
     val params: Map[String, Option[String]] = Map(
       QueryParam.CURSOR -> cursor
     )
-    val apiPath: String = Methods.USERS_ID_FOLLOWS
+    val apiPath: String = Methods.USERS_FOLLOWS
     request(Verbs.GET, apiPath, Some(params))
   }
 

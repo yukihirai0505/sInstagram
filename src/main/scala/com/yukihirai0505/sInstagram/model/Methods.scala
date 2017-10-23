@@ -66,7 +66,7 @@ object Methods {
     *
     * Required scope: relationships
     */
-  val USERS_ID_FOLLOWS: String = "/users/self/follows"
+  val USERS_FOLLOWS: String = "/users/self/follows"
 
   /**
     * Get the list of users this user is followed by.
