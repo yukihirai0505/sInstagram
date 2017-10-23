@@ -9,7 +9,7 @@ import com.yukihirai0505.com.scala.model.Response
 import com.yukihirai0505.sInstagram.model._
 import com.yukihirai0505.sInstagram.responses.auth.{AccessToken, Auth, SignedAccessToken}
 import com.yukihirai0505.sInstagram.responses.comments.MediaCommentsFeed
-import com.yukihirai0505.sInstagram.responses.common.{NoDataResponse, Pagination}
+import com.yukihirai0505.sInstagram.responses.common.{NoDataResponse, Pagination, User}
 import com.yukihirai0505.sInstagram.responses.likes.LikesFeed
 import com.yukihirai0505.sInstagram.responses.locations.{LocationInfo, LocationSearchFeed}
 import com.yukihirai0505.sInstagram.responses.media.{MediaFeed, MediaInfoFeed}
@@ -386,14 +386,13 @@ class Instagram(auth: Auth) {
   /**
     * Get the next page for list of 'users' the authenticated is followed by.
     *
-    * @param userId
     * @param cursor
     */
-  def getUserFollowedByList(userId: String, cursor: Option[String] = None): Future[Response[UserFeed]] = {
+  def getUserFollowedByList(cursor: Option[String] = None): Future[Response[UserFeed]] = {
     val params: Map[String, Option[String]] = Map(
-      QueryParam.CURSOR -> Option(cursor.mkString)
+      QueryParam.CURSOR -> cursor
     )
-    request(Verbs.GET, Methods.USERS_ID_FOLLOWED_BY format userId, Some(params))
+    request(Verbs.GET, Methods.USERS_FOLLOWED_BY, Some(params))
   }
 
   /**

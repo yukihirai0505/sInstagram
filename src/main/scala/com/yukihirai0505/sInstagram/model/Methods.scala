@@ -73,7 +73,7 @@ object Methods {
     *
     * Required scope: relationships
     */
-  val USERS_ID_FOLLOWED_BY: String = "/users/%s/followed-by"
+  val USERS_FOLLOWED_BY: String = "/users/self/followed-by"
 
   /**
     * Get information about the current user's relationship
