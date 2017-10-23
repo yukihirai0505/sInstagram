@@ -82,12 +82,12 @@ class InstagramSpec extends FlatSpec with Matchers {
   }
 
   "getUserFollowList" should "return a Some[UserFeed]" in {
-    val request = Await.result(instagram.getUserFollowList(userId.getOrElse("")), 10 seconds)
+    val request = Await.result(instagram.getUserFollowList, 10 seconds)
     request should be(anInstanceOf[Response[UserFeed]])
   }
 
   "getUserFollowListNextPage" should "return a Some[UserFeed]" in {
-    val request = Await.result(instagram.getUserFollowListNextPage(userId.getOrElse("")), 10 seconds)
+    val request = Await.result(instagram.getUserFollowListNextPage(), 10 seconds)
     request should be(anInstanceOf[Response[UserFeed]])
   }
 

@@ -154,24 +154,22 @@ class Instagram(auth: Auth) {
   /**
     * Get the list of 'users' the authenticated user follows.
     *
-    * @param userId
-    * userId of the User.
     * @return a UserFeed object.
     *         if any error occurs.
     */
-  def getUserFollowList(userId: String): Future[Response[UserFeed]] = {
-    getUserFollowListNextPage(userId)
+  def getUserFollowList: Future[Response[UserFeed]] = {
+    getUserFollowListNextPage()
   }
 
   /**
     * Get the next page for list of 'users' the authenticated user follows.
     *
     */
-  def getUserFollowListNextPage(userId: String, cursor: Option[String] = None): Future[Response[UserFeed]] = {
+  def getUserFollowListNextPage(cursor: Option[String] = None): Future[Response[UserFeed]] = {
     val params: Map[String, Option[String]] = Map(
       QueryParam.CURSOR -> cursor
     )
-    val apiPath: String = Methods.USERS_ID_FOLLOWS format userId
+    val apiPath: String = Methods.USERS_ID_FOLLOWS
     request(Verbs.GET, apiPath, Some(params))
   }
 
