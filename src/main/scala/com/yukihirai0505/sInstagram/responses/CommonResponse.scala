@@ -94,6 +94,39 @@ object UsersInPhoto {
   implicit val UsersInPhotoFormat = JsonNaming.snakecase(Json.format[UsersInPhoto])
 }
 
+case class Video(url: String, width: Int, height: Int)
+
+
+object Video {
+  implicit val VideoFormat = Json.format[Video]
+}
+
+case class Videos(
+                   lowBandwith: Option[Video],
+                   lowResolution: Video,
+                   standardResolution: Video
+                 )
+
+object Videos {
+  implicit val VideosFormat = JsonNaming.snakecase(Json.format[Videos])
+}
+
+case class Image(url: String, width: Int, height: Int)
+
+object Image {
+  implicit val ImageFormat = Json.format[Image]
+}
+
+case class Images(
+                   lowResolution: Image,
+                   thumbnail: Image,
+                   standardResolution: Image
+                 )
+
+object Images {
+  implicit val ImagesFormat = JsonNaming.snakecase(Json.format[Images])
+}
+
 case class CarouselMedia(
                           images: Option[Images],
                           videos: Option[Videos],
@@ -149,23 +182,6 @@ object Comments {
   implicit val CommentsFormat = Json.format[Comments]
 }
 
-
-case class Image(url: String, width: Int, height: Int)
-
-object Image {
-  implicit val ImageFormat = Json.format[Image]
-}
-
-case class Images(
-                   lowResolution: Image,
-                   thumbnail: Image,
-                   standardResolution: Image
-                 )
-
-object Images {
-  implicit val ImagesFormat = JsonNaming.snakecase(Json.format[Images])
-}
-
 case class Likes(count: Int)
 
 object Likes {
@@ -193,22 +209,4 @@ case class MediaLocation(
 
 object MediaLocation {
   implicit val mediaLocationFormat = Json.format[MediaLocation]
-}
-
-
-case class Video(url: String, width: Int, height: Int)
-
-
-object Video {
-  implicit val VideoFormat = Json.format[Video]
-}
-
-case class Videos(
-                   lowBandwith: Option[Video],
-                   lowResolution: Video,
-                   standardResolution: Video
-                 )
-
-object Videos {
-  implicit val VideosFormat = JsonNaming.snakecase(Json.format[Videos])
 }
