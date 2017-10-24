@@ -52,14 +52,13 @@ class InstagramSpec extends FlatSpec with Matchers {
   var locationId: Option[String] = None
   var latitude: Option[Double] = None
   var longitude: Option[Double] = None
-  var mediaCommentId: Option[String] = None
 
+  /* User */
   "getCurrentUserInfo" should "return a Some[UserInfo]" in {
     val request = Await.result(instagram.getUserInfo(), 10 seconds)
     userId = request.data.map(_.data.id)
     request should be(anInstanceOf[Response[Data[UserInfo]]])
   }
-
 
   "A failed request" should "return a failed promise" in {
     an[Exception] should be thrownBy Await.result(new Instagram(wrongToken).getUserInfo(userId), 10 seconds)
@@ -68,20 +67,8 @@ class InstagramSpec extends FlatSpec with Matchers {
   "getRecentMediaFeed" should "return a Some[MediaFeed]" in {
     val request = Await.result(instagram.getRecentMediaFeed(), 10 seconds)
     mediaId = request.data.flatMap(_.data.lastOption.flatMap(x => Some(x.id)))
-    locationId = request.data.flatMap(_.data.lastOption.flatMap(_.location.flatMap(x => Some(x.id.getOrElse("").toString)))
-    )
+    locationId = request.data.flatMap(_.data.lastOption.flatMap(_.location.flatMap(x => Some(x.id.getOrElse("").toString))))
     request should be(anInstanceOf[Response[DataWithPage[MediaFeed]]])
-  }
-
-  "getUserFollowList" should "return a Some[UserFeed]" in {
-    val request = Await.result(instagram.getFollowList(), 10 seconds)
-    request should be(anInstanceOf[Response[Data[User]]])
-  }
-
-  "getUserAllFollowsList" should "return Seq[User]" in {
-    val request = Await.result(instagram.getAllFollowsList, 10 seconds)
-    if (request.isEmpty) request.isEmpty should be(true)
-    else request should be(anInstanceOf[Seq[User]])
   }
 
   "getUserLikedMediaFeed" should "return a Some[MediaFeed]" in {
@@ -94,62 +81,18 @@ class InstagramSpec extends FlatSpec with Matchers {
     request should be(anInstanceOf[Response[Data[Seq[User]]]])
   }
 
-  "getLocationInfo" should "return a Some[LocationInfo]" in {
-    val request = Await.result(instagram.getLocationInfo(locationId.getOrElse("")), 10 seconds)
-    latitude = request.data.flatMap(_.data.latitude)
-    longitude = request.data.flatMap(_.data.longitude)
-    request should be(anInstanceOf[Response[Data[Location]]])
+
+  /* Relationships */
+
+  "getUserFollowList" should "return a Some[UserFeed]" in {
+    val request = Await.result(instagram.getFollowList(), 10 seconds)
+    request should be(anInstanceOf[Response[Data[User]]])
   }
 
-  "getTagInfo200" should "return a Some[TagInfoFeed]" in {
-    val request = Await.result(instagram.getTagInfo("test"), 10 seconds)
-    request should be(anInstanceOf[Response[Data[TagInfoFeed]]])
-  }
-
-  "getTagInfo400" should "return a Some[TagInfoFeed]" in {
-    // "lolita" will be 400 This tag cannot be viewed
-    an[Exception] should be thrownBy Await.result(instagram.getTagInfo("lolita"), 10 seconds)
-  }
-
-  "searchLocation" should "return a Some[LocationSearchFeed]" in {
-    val request = Await.result(instagram.searchLocation(latitude.getOrElse(0), longitude.getOrElse(0)), 10 seconds)
-    request should be(anInstanceOf[Response[Data[Seq[Location]]]])
-  }
-
-  "getRecentMediaByLocation" should "return a Some[MediaFeed]" in {
-    val request = Await.result(instagram.getLocationRecentMedia(locationId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Response[DataWithPage[MediaFeed]]])
-  }
-
-  "setUserLike" should "return a Some[LikesFeed]" in {
-    val request = Await.result(instagram.setUserLike(mediaId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Response[Data[LikeUserInfo]]])
-  }
-
-  "getMediaInfo" should "return a Some[MediaInfoFeed]" in {
-    val request = Await.result(instagram.getMediaInfo(mediaId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Response[Data[MediaFeed]]])
-  }
-
-  "deleteUserLike" should "return a Some[NoDataResponse]" in {
-    val request = Await.result(instagram.deleteUserLike(mediaId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Response[NoDataResponse]])
-  }
-
-  "setMediaComments" should "return a Some[NoDataResponse]" in {
-    val request = Await.result(instagram.setMediaComments(mediaId.getOrElse(""), "test"), 10 seconds)
-    request should be(anInstanceOf[Response[NoDataResponse]])
-  }
-
-  "getMediaComments" should "return a Some[MediaCommentsFeed]" in {
-    val request = Await.result(instagram.getMediaComments(mediaId.getOrElse("")), 10 seconds)
-    mediaCommentId = request.data.flatMap(_.data.lastOption).flatMap(x => Some(x.id))
-    request should be(anInstanceOf[Response[Data[Seq[CommentData]]]])
-  }
-
-  "deleteMediaCommentById" should "return a Some[NoDataResponse]" in {
-    val request = Await.result(instagram.deleteMediaCommentById(mediaId.getOrElse(""), mediaCommentId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Response[NoDataResponse]])
+  "getUserAllFollowsList" should "return Seq[User]" in {
+    val request = Await.result(instagram.getAllFollowsList, 10 seconds)
+    if (request.isEmpty) request.isEmpty should be(true)
+    else request should be(anInstanceOf[Seq[User]])
   }
 
   "getUserFollowedByList" should "return a Some[UserFeed]" in {
@@ -163,26 +106,6 @@ class InstagramSpec extends FlatSpec with Matchers {
     else request should be(anInstanceOf[Seq[User]])
   }
 
-  "getMediaInfoByShortCode" should "return a Some[MediaInfoFeed]" in {
-    val request = Await.result(instagram.getMediaInfoByShortcode("BZfmV4RFklR"), 10 seconds)
-    request should be(anInstanceOf[Response[Data[MediaFeed]]])
-  }
-
-  "searchTags" should "return a Some[TagSearchFeed]" in {
-    val request = Await.result(instagram.searchTags("test"), 10 seconds)
-    request should be(anInstanceOf[Response[Data[Seq[TagInfoFeed]]]])
-  }
-
-  "getRecentMediaFeedTags" should "return a Some[MediaFeed]" in {
-    val request = Await.result(instagram.getTagsRecentMedia("test"), 10 seconds)
-    request should be(anInstanceOf[Response[DataWithPage[MediaFeed]]])
-  }
-
-  "setUserRelationship" should "return a Some[RelationshipFeed]" in {
-    val request = Await.result(instagram.setUserRelationship(userId.getOrElse(""), Relationship.FOLLOW), 10 seconds)
-    request should be(anInstanceOf[Response[Data[RelationshipFeed]]])
-  }
-
   "getUserRequestedBy" should "return a Some[UserFeed]" in {
     val request = Await.result(instagram.getUserRequestedBy, 10 seconds)
     request should be(anInstanceOf[Response[DataWithPage[User]]])
@@ -193,9 +116,21 @@ class InstagramSpec extends FlatSpec with Matchers {
     request should be(anInstanceOf[Response[Data[RelationshipFeed]]])
   }
 
-  "searchFacebookPlace" should "return a Some[LocationSearchFeed]" in {
-    val request = Await.result(instagram.searchFacebookPlace(locationId.getOrElse("")), 10 seconds)
-    request should be(anInstanceOf[Response[Data[Seq[Location]]]])
+  "setUserRelationship" should "return a Some[RelationshipFeed]" in {
+    val request = Await.result(instagram.setUserRelationship(userId.getOrElse(""), Relationship.FOLLOW), 10 seconds)
+    request should be(anInstanceOf[Response[Data[RelationshipFeed]]])
+  }
+
+  /* Media */
+
+  "getMediaInfo" should "return a Some[MediaInfoFeed]" in {
+    val request = Await.result(instagram.getMediaInfo(mediaId.getOrElse("")), 10 seconds)
+    request should be(anInstanceOf[Response[Data[MediaFeed]]])
+  }
+
+  "getMediaInfoByShortcode" should "return a Some[MediaInfoFeed]" in {
+    val request = Await.result(instagram.getMediaInfoByShortcode("BZfmV4RFklR"), 10 seconds)
+    request should be(anInstanceOf[Response[Data[MediaFeed]]])
   }
 
   "searchMedia" should "return a Some[MediaFeed]" in {
@@ -203,9 +138,87 @@ class InstagramSpec extends FlatSpec with Matchers {
     request should be(anInstanceOf[Response[Data[Seq[MediaFeed]]]])
   }
 
+  /* Comments */
+
+  "getMediaComments" should "return a Some[MediaCommentsFeed]" in {
+    val request = Await.result(instagram.getMediaComments(mediaId.getOrElse("")), 10 seconds)
+    val mediaCommentId = request.data.flatMap(_.data.lastOption).flatMap(x => Some(x.id))
+    request should be(anInstanceOf[Response[Data[Seq[CommentData]]]])
+  }
+
+  "setMediaComments" should "return a Some[NoDataResponse]" in {
+    val request = Await.result(instagram.setMediaComments(mediaId.getOrElse(""), "test"), 10 seconds)
+    request should be(anInstanceOf[Response[NoDataResponse]])
+  }
+
+  "deleteMediaCommentById" should "return a Some[NoDataResponse]" in {
+    val mediaCommentId = Await.result(instagram.getMediaComments(mediaId.getOrElse("")), 10 seconds).data.flatMap(_.data.lastOption).flatMap(x => Some(x.id)).get
+    val request = Await.result(instagram.deleteMediaCommentById(mediaId.getOrElse(""), mediaCommentId), 10 seconds)
+    request should be(anInstanceOf[Response[NoDataResponse]])
+  }
+
+  /* Like */
+
   "getUserLikes" should "return a Some[LikesFeed]" in {
     val request = Await.result(instagram.getUserLikes(mediaId.getOrElse("")), 10 seconds)
     request should be(anInstanceOf[Response[Data[Seq[LikeUserInfo]]]])
   }
+
+  "setUserLike" should "return a Some[LikesFeed]" in {
+    val request = Await.result(instagram.setUserLike(mediaId.getOrElse("")), 10 seconds)
+    request should be(anInstanceOf[Response[Data[LikeUserInfo]]])
+  }
+
+  "deleteUserLike" should "return a Some[NoDataResponse]" in {
+    val request = Await.result(instagram.deleteUserLike(mediaId.getOrElse("")), 10 seconds)
+    request should be(anInstanceOf[Response[NoDataResponse]])
+  }
+
+  /* Tags */
+
+  "getTagInfo200" should "return a Some[TagInfoFeed]" in {
+    val request = Await.result(instagram.getTagInfo("test"), 10 seconds)
+    request should be(anInstanceOf[Response[Data[TagInfoFeed]]])
+  }
+
+  "getTagInfo400" should "return a Some[TagInfoFeed]" in {
+    // "lolita" will be 400 This tag cannot be viewed
+    an[Exception] should be thrownBy Await.result(instagram.getTagInfo("lolita"), 10 seconds)
+  }
+
+  "getTagsRecentMedia" should "return a Some[MediaFeed]" in {
+    val request = Await.result(instagram.getTagsRecentMedia("test"), 10 seconds)
+    request should be(anInstanceOf[Response[DataWithPage[MediaFeed]]])
+  }
+
+  "searchTags" should "return a Some[TagSearchFeed]" in {
+    val request = Await.result(instagram.searchTags("test"), 10 seconds)
+    request should be(anInstanceOf[Response[Data[Seq[TagInfoFeed]]]])
+  }
+
+  /* Locations */
+
+  "getLocationInfo" should "return a Some[LocationInfo]" in {
+    val request = Await.result(instagram.getLocationInfo(locationId.getOrElse("")), 10 seconds)
+    latitude = request.data.flatMap(_.data.latitude)
+    longitude = request.data.flatMap(_.data.longitude)
+    request should be(anInstanceOf[Response[Data[Location]]])
+  }
+
+  "getLocationRecentMedia" should "return a Some[MediaFeed]" in {
+    val request = Await.result(instagram.getLocationRecentMedia(locationId.getOrElse("")), 10 seconds)
+    request should be(anInstanceOf[Response[DataWithPage[MediaFeed]]])
+  }
+
+  "searchLocation" should "return a Some[LocationSearchFeed]" in {
+    val request = Await.result(instagram.searchLocation(latitude.getOrElse(0), longitude.getOrElse(0)), 10 seconds)
+    request should be(anInstanceOf[Response[Data[Seq[Location]]]])
+  }
+
+  "searchFacebookPlace" should "return a Some[LocationSearchFeed]" in {
+    val request = Await.result(instagram.searchFacebookPlace(locationId.getOrElse("")), 10 seconds)
+    request should be(anInstanceOf[Response[Data[Seq[Location]]]])
+  }
+
 
 }

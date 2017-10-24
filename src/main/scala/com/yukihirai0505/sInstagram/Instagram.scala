@@ -362,7 +362,7 @@ class Instagram(override val auth: Auth) extends InstagramTrait {
     request(Verbs.GET, Methods.TAGS_SEARCH, Some(params))
   }
 
-  /* Location */
+  /* Locations */
 
   /**
     * Get information about a location.
